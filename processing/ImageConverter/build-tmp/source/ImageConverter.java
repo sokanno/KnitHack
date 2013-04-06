@@ -164,24 +164,24 @@ public void draw() {
     img = dimg;
     dimgConvert = false;
   }
-  background(0,0,30);
+  background(15,5,15);
 
   if(simg != null){
     image(simg, 840, 235, 285, 285);
-    image(title, 20, 640); 
+    image(title, 20, 640);
+    fill(0,0,100);
     text("original", 840, 220);
   }
 
   if (img != null) {
-      
+    // img = dimg;  
     img.resize(column, row);
     // img.resize(200, 200);
-    img.updatePixels();
+    // img.updatePixels();
     img.loadPixels();
 
-
     //converting Image to black and white(1/0)array "pixelBin[][]"
-    int[][] pixelBin = new int[row][column];
+    pixelBin = new int[row][column];
     for(int i=0; i<row; i++){
       for(int j=0; j<column; j++){
         int c = img.pixels[(i*column)+j];
@@ -198,21 +198,20 @@ public void draw() {
     //converting "pixelBin[][]" to "displayBin[][]" for displaying
     for (int i=0; i<maxRow; i++) {
       for(int j=0; j<maxColumn; j++){
-        int marginX = (maxColumn - column)/2;
+        int margin = (maxColumn - column)/2;
         if(i<row){
-          if(j<marginX){
-            displayBin[i][j] = 0;   
-          }else if(j>=marginX){
-            displayBin[i][j] = pixelBin[i][j-marginX+1];
-          }else if(j > (marginX+column)){
-            displayBin[i][j] = 0;   
+          if(j>=margin && j<column+margin){
+            displayBin[i][j] = pixelBin[i][j-margin];
+          }else{
+            displayBin[i][j] = 2;
           }
-        }else{
-          displayBin[i][j] = 0;
+        }else{  
+          displayBin[i][j] = 2;
         }
       }
     }
 
+    //displaying displayBin[][]
     for (int i=0; i<maxRow; i++) {
       for(int j=0; j<maxColumn; j++){
         float h = 0;
@@ -220,33 +219,31 @@ public void draw() {
         float b = 0;        
         if(displayBin[i][j] == 1){
           if(sendStatus[i][0] == false){
-            h = 0;//white
+            h = 0;
             s = 0;
-            b = 100;
+            b = 100;//white
           }
           else {
             h = 17;
             s = 100;
-            b = 100;
-            // h = 95;  this is pink
-            // s = 100;
-            // b = 100;
+            b = 100;//yellow
           }
         }else if(displayBin[i][j] == 0){
           if(sendStatus[i][0] == false){
             h = 0;
             s = 0;
-            b = 0;
+            b = 0;//black
           }
           else {
             h = 55;
             s = 100;
-            b = 90;
-            // h = 25;    this is lime green
-            // s = 100;
-            // b = 90;
+            b = 90;//blue
           }
-        }
+        }else if(displayBin[i][j] == 2){
+            h = 0;
+            s = 0;
+            b = 20;//grey
+          }
         stroke(0,0,strokeColor);
         fill(h, s, b);
         rect(20+j*4, 20+i*3, 4, 3);
@@ -255,59 +252,34 @@ public void draw() {
   }
 
   //draw column line and row line
-  stroke(25,100,90);
+  stroke(25,100,90);//lime green
   line(20 + 100*4 - column*2 , 20, 20 + 100*4 - column*2, 20+200*3);
   line(20 + 100*4 + column*2 , 20, 20 + 100*4 + column*2, 20+200*3);
-  stroke(95,100,100);
+  stroke(90,100,100);//pink
   line(20, 20, 20+200*4, 20);
   line(20, 20 + row*3 ,20+200*4 ,20 + row*3);
-
-
 }
 
 public void Reset(int theValue){
   header = 0;
-  for (int i=0; i<packets; i++) {
+  for (int i=0; i<row; i++) {
     sendStatus[i][0] = false;
   }
   reset.trigger();
 }
 
 public void SendtoKnittingMachine(int theValue) {
-  int[] pixelAbs = new int[packets*dataSize];
-
-  //converting from grey img.pixels[] to 1/0 pixelBin[][]  
-  for (int j=0; j<packets; j++) {
-    for (int i=0; i<dataSize; i++) {
-      pixelAbs[(j*dataSize)+i] = PApplet.parseInt(brightness((img.pixels[(j*dataSize)+i])));
-      if (pixelAbs[(j*dataSize)+i] > threshold) {
-        pixelBin[j][i] = 1;
-      } 
-      else {
-        pixelBin[j][i] = 0;
-      }
-    }
-  }
-
-  // println(pixelBin);
-
-
-
   //sending pixelBin[][] to knitting Machine! 
-  // port.write(header);
-  for (int i=0; i<dataSize; i++) {
+  for (int i=0; i<column; i++) {
     port.write(pixelBin[header][i]);
   }
-  // label = 0;
   port.write(footer);
   print(header);
   println("sent");
   sendStatus[header][0] = true;
   header++;
-  // display = true;
   ready.trigger();
 }
-
 
 // void serialEvent(Serial p) {
 //   int a = p.read();
@@ -340,7 +312,6 @@ public void serialEvent(Serial p){
       }
     }
 }
-
 
 public void dropEvent(DropEvent theDropEvent) {
   println("");
