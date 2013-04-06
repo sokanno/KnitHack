@@ -20,6 +20,12 @@ import java.io.IOException;
 
 public class ImageConverter extends PApplet {
 
+/*
+Image Converter for hacked Brother KH970.
+2013 April
+So Kanno
+*/
+
 
 
 
@@ -47,17 +53,23 @@ PFont pfont;
 boolean colorValue = true;
 boolean display;
 int strokeColor = 25;
+int column = 64;
+int row = 64;
 int dataSize = 64;
 int packets = 64;
-// int machineColumn = 200;
-// int[][] sendBin = new int[packets][machineColumn];
-int[][] pixelBin = new int[packets][dataSize]; 
-boolean [][] sendStatus = new boolean [packets][dataSize];
+int maxColumn = 200;
+int maxRow = 200;
+int[][] pixelBin = new int[row][column];
+int[][] displayBin = new int[maxRow][maxColumn];
+boolean [][] sendStatus = new boolean [maxRow][maxColumn];
 int header = 0;
 byte footer = 126;
+int lime = color(25, 100, 90);
+int pink = color(90, 100, 100);
 
 public void setup() {
-  size(865, 485);
+  size(1150, 690);
+  colorMode(HSB, 100);
   pfont = loadFont("04b-03b-16.vlw");
   textFont(pfont, 16);
   ControlFont cfont = new ControlFont(pfont, 16); 
@@ -66,33 +78,50 @@ public void setup() {
   title = loadImage("title.gif");
   cp5 = new ControlP5(this);
 
-  cp5.addButton("loadImageFile")
-    .setPosition(555, 20)
-      .setSize(127, 30);
-
   cp5.addSlider("threshold")
-    .setPosition(555, 70)
+    .setPosition(840, 20)
       .setSize(200, 30)
         .setRange(0, 99)
           .setValue(25);
 
+  cp5.addSlider("column")
+    .setPosition(840, 70)
+      .setSize(200, 30)
+        .setRange(32, 200)
+          .setValue(64)
+            .setColorValue(color(25, 100, 90));        
+
+  cp5.addSlider("row")
+    .setPosition(840, 120)
+      .setSize(200, 30)
+        .setRange(32, 200)
+          .setValue(64)
+            .setColorValue(color(90, 100, 100));  
+
   cp5.addButton("Reset")
-    .setPosition(555, 374)
+    .setPosition(840, 540)
       .setSize(100, 30);
 
   cp5.addButton("SendtoKnittingMachine")
-    .setPosition(555, 424)
+    .setPosition(840, 590)
       .setSize(203, 30);
-
-  cp5.getController("loadImageFile")
-    .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
 
   cp5.getController("threshold")
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
+
+  cp5.getController("column")
+    .getCaptionLabel()
+      .setColor(color(25, 100, 90))
+        .setFont(cfont)
+          .setSize(16);
+
+  cp5.getController("row")
+    .getCaptionLabel()
+      .setColor(color(90, 100, 100))
+        .setFont(cfont)
+          .setSize(16);
 
   cp5.getController("SendtoKnittingMachine")
     .getCaptionLabel()
@@ -110,92 +139,130 @@ public void setup() {
   port.clear();
   // port.bufferUntil(footer);
 
-  for (int i=0; i<packets; i++) {
+  for (int i=0; i<maxRow; i++) {
     sendStatus[i][0] = false;
   }
+
+  for(int i=0; i<maxColumn; i++){
+    for(int j=0; j<maxRow; j++){
+      displayBin[i][j] = 0;
+    }
+  }
+
   minim = new Minim(this);
   ready = minim.loadSample("ready.aif", 512);
   sent = minim.loadSample("sent.aif", 512);
   done = minim.loadSample("done.aif", 1024);
   reset = minim.loadSample("reset.aif", 1024);  
-  // if ( alert == null ) println("Didn't get kick!");
-  colorMode(HSB, 100);
 }
 
 public void draw() {
   if(dimgConvert){
     simg = dimg;
-    simg.resize(300, 300);
+    simg.resize(285, 285);
     simg.updatePixels();
     img = dimg;
     dimgConvert = false;
   }
   background(0,0,30);
-  if (getFile != null) {
-    fileLoader();
-  }
 
   if(simg != null){
-    image(simg, 555, 148, 205, 205);
-    image(title, 20, 430); 
-    text("original", 555, 135);
+    image(simg, 840, 235, 285, 285);
+    image(title, 20, 640); 
+    text("original", 840, 220);
   }
 
   if (img != null) {
       
-    img.resize(64, 64);
+    img.resize(column, row);
+    // img.resize(200, 200);
     img.updatePixels();
     img.loadPixels();
 
-    for (int i=0; i<packets; i++) {
-      for (int j=0; j<dataSize; j++) {
-        int c = img.pixels[(i*dataSize)+j];
+
+    //converting Image to black and white(1/0)array "pixelBin[][]"
+    int[][] pixelBin = new int[row][column];
+    for(int i=0; i<row; i++){
+      for(int j=0; j<column; j++){
+        int c = img.pixels[(i*column)+j];
         int b = PApplet.parseInt(brightness(c));
+        if(b > threshold){
+          pixelBin[i][j] = 1;
+        }
+        else if(b <= threshold){
+          pixelBin[i][j] = 0;
+        }
+      }
+    }
+
+    //converting "pixelBin[][]" to "displayBin[][]" for displaying
+    for (int i=0; i<maxRow; i++) {
+      for(int j=0; j<maxColumn; j++){
+        int marginX = (maxColumn - column)/2;
+        if(i<row){
+          if(j<marginX){
+            displayBin[i][j] = 0;   
+          }else if(j>=marginX){
+            displayBin[i][j] = pixelBin[i][j-marginX+1];
+          }else if(j > (marginX+column)){
+            displayBin[i][j] = 0;   
+          }
+        }else{
+          displayBin[i][j] = 0;
+        }
+      }
+    }
+
+    for (int i=0; i<maxRow; i++) {
+      for(int j=0; j<maxColumn; j++){
         float h = 0;
         float s = 0;
-        if (b < 0) {
-          colorValue = false;
-        }
-        else if (b >= 0) {
-          colorValue = true;
-        }
-        b = abs(b);
-
-        if(b > threshold){
+        float b = 0;        
+        if(displayBin[i][j] == 1){
           if(sendStatus[i][0] == false){
             h = 0;//white
             s = 0;
             b = 100;
           }
           else {
-            h = 95;
+            h = 17;
             s = 100;
             b = 100;
+            // h = 95;  this is pink
+            // s = 100;
+            // b = 100;
           }
-        }
-        else if(b <= threshold){
+        }else if(displayBin[i][j] == 0){
           if(sendStatus[i][0] == false){
-            h = 0;// 5 is orange
+            h = 0;
             s = 0;
             b = 0;
           }
           else {
-            h = 25;//yellow, 95 is pink
+            h = 55;
             s = 100;
-            b = 90;//was 90
+            b = 90;
+            // h = 25;    this is lime green
+            // s = 100;
+            // b = 90;
           }
         }
         stroke(0,0,strokeColor);
         fill(h, s, b);
-        rect(20+j*8, 20+i*6, 8, 6);
+        rect(20+j*4, 20+i*3, 4, 3);
       }
     }
-    display = false;
   }
-}
 
-public void loadImageFile(int theValue) {
-  getFile = getFileName();
+  //draw column line and row line
+  stroke(25,100,90);
+  line(20 + 100*4 - column*2 , 20, 20 + 100*4 - column*2, 20+200*3);
+  line(20 + 100*4 + column*2 , 20, 20 + 100*4 + column*2, 20+200*3);
+  stroke(95,100,100);
+  line(20, 20, 20+200*4, 20);
+  line(20, 20 + row*3 ,20+200*4 ,20 + row*3);
+
+
 }
 
 public void Reset(int theValue){
@@ -274,36 +341,6 @@ public void serialEvent(Serial p){
     }
 }
 
-public void fileLoader() {
-  String ext = getFile.substring(getFile.lastIndexOf('.') + 1);
-  ext.toLowerCase();
-  if (ext.equals("jpg") || ext.equals("png") ||  ext.equals("gif") || ext.equals("tga")) {
-    dimg = loadImage(getFile);
-  }
-  getFile = null;
-  display = true;
-  dimgConvert = true;
-}
-
-public String getFileName() {
-  SwingUtilities.invokeLater(new Runnable() { 
-    public void run() {
-      try {
-        JFileChooser fc = new JFileChooser(); 
-        int returnVal = fc.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = fc.getSelectedFile();
-          getFile = file.getPath();
-        }
-      }
-      catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  } 
-  );
-  return getFile;
-}
 
 public void dropEvent(DropEvent theDropEvent) {
   println("");
