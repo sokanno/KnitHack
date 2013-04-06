@@ -47,7 +47,7 @@ const int REnd = 22;   //右エンドスイッチ
 
 const int LED = 13;
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 // LCD RS to 12
 // LCD Enable to 11
 // LCD D4 to 5
