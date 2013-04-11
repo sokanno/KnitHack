@@ -173,11 +173,11 @@ void loop(){
   if(zero != lastZero){
     if(zero == LOW){      
       // pos = 0;
-      // if(carDirection == 2){
-      //   pos = 27;
-      //   // Serial.println("Lend");
-      //   // Serial.write(header);
-      // }
+      if(carDirection == 2){
+        pos = 27;
+        // Serial.println("Lend");
+        // Serial.write(header);
+      }
     } 
   }
 
@@ -186,11 +186,11 @@ void loop(){
   if(right != lastRight){
     if(right == LOW){
       // pos = 200;
-      // if(carDirection == 1){
-      //   pos = 228;
-      //   // Serial.println("Rend");
-      //   // Serial.write(header);
-      // }
+      if(carDirection == 1){
+        pos = 228;
+        // Serial.println("Rend");
+        // Serial.write(header);
+      }
     } 
   }
 
