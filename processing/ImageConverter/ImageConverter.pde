@@ -25,6 +25,7 @@ AudioSample done;
 AudioSample reset;
 AudioSample error;
 
+boolean completeFlag = false;
 boolean resizeFlag = true;
 boolean dimgConvert = true;
 String getFile = null;
@@ -326,13 +327,14 @@ void serialEvent(Serial p){
     println("sent");
     sendStatus[header][0] = true;
     sent.trigger();
-    }else if(header == row){
+    }else if(header == row-1 && !completeFlag){
       println("completed!");
       done.trigger();
-      for(int i=0; i<row; i++){
+      for(int i=0; i<row-1; i++){
        sendStatus[i][0] = false;
        header = 0;
       }
+      completeFlag = true;
     }else{
       error.trigger();
     }
