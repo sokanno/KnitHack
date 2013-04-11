@@ -29,6 +29,7 @@ boolean dimgConvert = true;
 String getFile = null;
 int threshold = 210;
 PFont pfont;
+PFont numFont;
 boolean colorValue = true;
 int strokeColor = 25;
 int column = 64;
@@ -47,6 +48,7 @@ void setup() {
   size(1150, 690);
   colorMode(HSB, 100);
   pfont = loadFont("04b-03b-16.vlw");
+  numFont = loadFont("04b-03b-8.vlw");
   textFont(pfont, 16);
   ControlFont cfont = new ControlFont(pfont, 16); 
   simg = loadImage("default.gif");
@@ -150,6 +152,8 @@ void draw() {
     image(oimg, 840, 235, 285, 285);
     image(title, 20, 640);
     fill(0,0,100);
+    textFont(pfont, 16);
+    textAlign(LEFT, BOTTOM);
     text("original", 840, 220);
   }
 
@@ -254,6 +258,23 @@ void draw() {
   stroke(90,100,100);//pink
   line(20, 20, 20+200*4, 20);
   line(20, 20 + row*3 ,20+200*4 ,20 + row*3);
+
+  //draw tick mark
+  fill(25,100,90);
+  stroke(25,100,90);
+  textFont(numFont, 8);
+  textAlign(CENTER, BOTTOM);
+  for(int i=0; i<21; i++){
+    text(i*10, 20+i*40, 17); 
+    line(20+i*40,17,20+i*40,19);
+  }
+  fill(90,100,100);
+  stroke(90,100,100);
+  textAlign(RIGHT, CENTER);
+  for(int i=0; i<21; i++){
+    text(i*10, 17, 20+i*30); 
+    line(17,20+i*30,19,20+i*30);
+  }
 }
 
 public void Reset(int theValue){
