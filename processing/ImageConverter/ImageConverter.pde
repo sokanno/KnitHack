@@ -81,11 +81,11 @@ void setup() {
             .setColorValue(color(90, 100, 100));  
 
   cp5.addButton("Reset")
-    .setPosition(860, 591)
+    .setPosition(850, 591)
       .setSize(100, 30);
 
   cp5.addButton("SendtoKnittingMachine")
-    .setPosition(860, 641)
+    .setPosition(850, 641)
       .setSize(203, 30);
 
   cp5.getController("threshold")
