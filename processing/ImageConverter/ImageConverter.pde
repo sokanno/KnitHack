@@ -11,9 +11,10 @@ import processing.serial.*;
 import ddf.minim.*;
 
 ControlP5 cp5;
-PImage dimg;
-PImage img;
-PImage simg;
+PImage dimg;  //for drag and drop function
+PImage img;   //for displaying and sending image
+PImage oimg;  //for displaying original image
+PImage simg;  //keeping original size image
 PImage title;
 SDrop drop;
 Serial port;
@@ -24,17 +25,14 @@ AudioSample done;
 AudioSample reset;
 
 boolean resizeFlag = true;
-boolean dimgConvert = false;
+boolean dimgConvert = true;
 String getFile = null;
 int threshold = 210;
 PFont pfont;
 boolean colorValue = true;
-boolean display;
 int strokeColor = 25;
 int column = 64;
 int row = 64;
-int dataSize = 64;
-int packets = 64;
 int maxColumn = 200;
 int maxRow = 200;
 int[][] pixelBin = new int[row][column];
@@ -51,8 +49,10 @@ void setup() {
   pfont = loadFont("04b-03b-16.vlw");
   textFont(pfont, 16);
   ControlFont cfont = new ControlFont(pfont, 16); 
-  img = loadImage("default.gif");
   simg = loadImage("default.gif");
+  oimg = loadImage("default.gif");
+  img = loadImage("default.gif");
+  dimg = loadImage("default.gif");
   title = loadImage("title.gif");
   cp5 = new ControlP5(this);
 
@@ -136,29 +136,47 @@ void setup() {
 
 void draw() {
   if(dimgConvert){
-    simg = dimg;
-    simg.resize(285, 285);
-    simg.updatePixels();
-    img = dimg;
+    img = simg;
+    oimg = dimg;
+    oimg.resize(285, 285);
+    oimg.updatePixels();
+    // simg = dimg;
     dimgConvert = false;
+    println("image loaded");
   }
   background(15,5,15);
 
-  if(simg != null){
-    image(simg, 840, 235, 285, 285);
+  if(oimg != null){
+    image(oimg, 840, 235, 285, 285);
     image(title, 20, 640);
     fill(0,0,100);
     text("original", 840, 220);
   }
 
   if (img != null) {
-    // img = dimg;  
+    img = simg;  
     img.resize(column, row);
     // img.resize(200, 200);
     // img.updatePixels();
     img.loadPixels();
 
     //converting Image to black and white(1/0)array "pixelBin[][]"
+    // pixelBin = new int[row][column];
+    // float scaleRatioX = img.width / column;
+    // float scaleRatioY = img.height / row; 
+    // for(int i=0; i<row; i++){
+    //   for(int j=0; j<column; j++){
+    //     color c = img.pixels[int(i*column*scaleRatioY)+int(j*scaleRatioX)];
+    //     int b = int(brightness(c));
+    //     if(b > threshold){
+    //       pixelBin[i][j] = 1;
+    //     }
+    //     else if(b <= threshold){
+    //       pixelBin[i][j] = 0;
+    //     }
+    //   }
+    // }
+
     pixelBin = new int[row][column];
     for(int i=0; i<row; i++){
       for(int j=0; j<column; j++){
@@ -248,8 +266,12 @@ public void Reset(int theValue){
 
 public void SendtoKnittingMachine(int theValue) {
   //sending pixelBin[][] to knitting Machine! 
-  for (int i=0; i<column; i++) {
-    port.write(pixelBin[header][i]);
+  for (int i=0; i<maxColumn; i++) {
+    if(displayBin[header][i] == 2){
+      port.write(0);
+    }else{
+      port.write(displayBin[header][i]);      
+    }
   }
   port.write(footer);
   print(header);
@@ -272,8 +294,8 @@ void serialEvent(Serial p){
   // if(header != 0) header++;
   print("next is ");
   println(header);
-  if(header < packets-1){
-    for(int i=0; i<dataSize; i++){
+  if(header < row-1){
+    for(int i=0; i<column; i++){
       port.write(pixelBin[header][i]);
     }
     port.write(footer);
@@ -281,10 +303,10 @@ void serialEvent(Serial p){
     println("sent");
     sendStatus[header][0] = true;
     sent.trigger();
-    }else if(header == packets-1){
+    }else if(header == row-1){
       println("completed!");
       done.trigger();
-      for(int i=0; i<packets; i++){
+      for(int i=0; i<row; i++){
        sendStatus[i][0] = false;
        header = 0;
       }
@@ -302,8 +324,8 @@ void dropEvent(DropEvent theDropEvent) {
   if (theDropEvent.isImage()) {
     println("### loading image ...");
     dimg = theDropEvent.loadImage();
+    simg = theDropEvent.loadImage();
     dimgConvert = true;
-    resizeFlag = true;
   }
 }
 
