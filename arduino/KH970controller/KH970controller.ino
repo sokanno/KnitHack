@@ -7,7 +7,7 @@ Tomofumi Yoshida, So Kanno
 
 // #include <LiquidCrystal.h>
 
-char receivedBin[65];
+char receivedBin[201];
 int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -26,7 +26,7 @@ int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-int dataSize = 65;
+int dataSize = 201;
 boolean dataReplace = false;
 int header = 0;
 byte footer = 126;
@@ -108,21 +108,23 @@ void setup(){
 
 void loop(){
 
-  if(Serial.available() > 62){
+  // if(Serial.available() > 195){
     if(Serial.readBytesUntil(footer, receivedBin, dataSize)){
       dataReplace = true;     
-      // memset(receivedBin, 0, sizeof(receivedBin));
-      // for(int i=0; i<64; i++){
+      // for(int i=0; i<200; i++){
       //   Serial.write(receivedBin[i]);
       // }
     }
-  }
+  // }
 
   if(dataReplace){
     digitalWrite(13, HIGH);
-    for(int i=91; i<155; i++){
-      pixelBin[i] = receivedBin[i-91];
+    for(int i=23; i<223; i++){
+      pixelBin[i] = receivedBin[i-23];
     }
+    // for(int i=91; i<155; i++){
+    //   pixelBin[i] = receivedBin[i-91];
+    // }
     header++;
     // for(int i=0; i<256; i++){
     //   Serial.write(pixelBin[i]);
@@ -171,11 +173,11 @@ void loop(){
   if(zero != lastZero){
     if(zero == LOW){      
       // pos = 0;
-      if(carDirection == 2){
-        pos = 27;
-        // Serial.println("Lend");
-        // Serial.write(header);
-      }
+      // if(carDirection == 2){
+      //   pos = 27;
+      //   // Serial.println("Lend");
+      //   // Serial.write(header);
+      // }
     } 
   }
 
@@ -184,11 +186,11 @@ void loop(){
   if(right != lastRight){
     if(right == LOW){
       // pos = 200;
-      if(carDirection == 1){
-        pos = 228;
-        // Serial.println("Rend");
-        // Serial.write(header);
-      }
+      // if(carDirection == 1){
+      //   pos = 228;
+      //   // Serial.println("Rend");
+      //   // Serial.write(header);
+      // }
     } 
   }
 
