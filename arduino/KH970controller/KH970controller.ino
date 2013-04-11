@@ -108,19 +108,19 @@ void setup(){
 
 void loop(){
 
-  // if(Serial.available() > 195){
+  if(Serial.available() > 62){
     if(Serial.readBytesUntil(footer, receivedBin, dataSize)){
       dataReplace = true;     
       // for(int i=0; i<200; i++){
       //   Serial.write(receivedBin[i]);
       // }
     }
-  // }
+  }
 
   if(dataReplace){
     digitalWrite(13, HIGH);
-    for(int i=23; i<223; i++){
-      pixelBin[i] = receivedBin[i-23];
+    for(int i=24; i<224; i++){
+      pixelBin[i] = receivedBin[i-24];
     }
     // for(int i=91; i<155; i++){
     //   pixelBin[i] = receivedBin[i-91];
