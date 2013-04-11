@@ -47,7 +47,7 @@ color lime = color(25, 100, 90);
 color pink = color(90, 100, 100);
 
 void setup() {
-  size(1150, 690);
+  size(1155, 690);
   colorMode(HSB, 100);
   pfont = loadFont("04b-03b-16.vlw");
   numFont = loadFont("04b-03b-8.vlw");
@@ -55,37 +55,37 @@ void setup() {
   ControlFont cfont = new ControlFont(pfont, 16); 
   simg = loadImage("default.gif");
   oimg = loadImage("default.gif");
-  img = loadImage("default.gif");
   dimg = loadImage("default.gif");
+  img = createImage(dimg.width, dimg.height, HSB);
   title = loadImage("title.gif");
   cp5 = new ControlP5(this);
 
   cp5.addSlider("threshold")
-    .setPosition(840, 20)
+    .setPosition(850, 20)
       .setSize(200, 30)
         .setRange(0, 99)
           .setValue(25);
 
   cp5.addSlider("column")
-    .setPosition(840, 70)
+    .setPosition(850, 70)
       .setSize(200, 30)
         .setRange(32, 200)
           .setValue(64)
             .setColorValue(color(25, 100, 90));        
 
   cp5.addSlider("row")
-    .setPosition(840, 120)
+    .setPosition(850, 120)
       .setSize(200, 30)
         .setRange(32, 200)
           .setValue(64)
             .setColorValue(color(90, 100, 100));  
 
   cp5.addButton("Reset")
-    .setPosition(840, 540)
+    .setPosition(860, 591)
       .setSize(100, 30);
 
   cp5.addButton("SendtoKnittingMachine")
-    .setPosition(840, 590)
+    .setPosition(860, 641)
       .setSize(203, 30);
 
   cp5.getController("threshold")
@@ -119,7 +119,6 @@ void setup() {
   String portName = Serial.list()[0];
   port = new Serial(this, portName, 57600);
   port.clear();
-  // port.bufferUntil(footer);
 
   for (int i=0; i<maxRow; i++) {
     sendStatus[i][0] = false;
@@ -140,50 +139,36 @@ void setup() {
 }
 
 void draw() {
+
+  background(15,5,15);
+
   if(dimgConvert){
-    img = simg;
     oimg = dimg;
-    oimg.resize(285, 285);
-    oimg.updatePixels();
-    // simg = dimg;
     dimgConvert = false;
     println("image loaded");
   }
-  background(15,5,15);
 
   if(oimg != null){
-    image(oimg, 840, 235, 285, 285);
-    image(title, 20, 640);
+    oimg.resize(285, 0);
+    if(oimg.height >= 355){
+      oimg.resize(0, 355);
+    }
+    oimg.updatePixels();
+    image(oimg, 850, 215);
+    image(title, 30, 640);
     fill(0,0,100);
     textFont(pfont, 16);
     textAlign(LEFT, BOTTOM);
-    text("original", 840, 220);
+    text("original", 850, 200);
   }
 
   if (img != null) {
-    img = simg;  
+    img = simg.get(0,0,simg.width, simg.height);
     img.resize(column, row);
-    // img.resize(200, 200);
-    // img.updatePixels();
+    img.updatePixels();
     img.loadPixels();
 
     //converting Image to black and white(1/0)array "pixelBin[][]"
-    // pixelBin = new int[row][column];
-    // float scaleRatioX = img.width / column;
-    // float scaleRatioY = img.height / row; 
-    // for(int i=0; i<row; i++){
-    //   for(int j=0; j<column; j++){
-    //     color c = img.pixels[int(i*column*scaleRatioY)+int(j*scaleRatioX)];
-    //     int b = int(brightness(c));
-    //     if(b > threshold){
-    //       pixelBin[i][j] = 1;
-    //     }
-    //     else if(b <= threshold){
-    //       pixelBin[i][j] = 0;
-    //     }
-    //   }
-    // }
-
     pixelBin = new int[row][column];
     for(int i=0; i<row; i++){
       for(int j=0; j<column; j++){
@@ -249,34 +234,36 @@ void draw() {
           }
         stroke(0,0,strokeColor);
         fill(h, s, b);
-        rect(20+j*4, 20+i*3, 4, 3);
+        rect(30+j*4, 20+i*3, 4, 3);
       }
     }
   }
 
   //draw column line and row line
   stroke(25,100,90);//lime green
-  line(20 + 100*4 - column*2 , 20, 20 + 100*4 - column*2, 20+200*3);
-  line(20 + 100*4 + column*2 , 20, 20 + 100*4 + column*2, 20+200*3);
+  line(30 + 100*4 - column*2 , 20, 30 + 100*4 - column*2, 20+200*3);
+  line(30 + 100*4 + column*2 , 20, 30 + 100*4 + column*2, 20+200*3);
   stroke(90,100,100);//pink
-  line(20, 20, 20+200*4, 20);
-  line(20, 20 + row*3 ,20+200*4 ,20 + row*3);
+  line(30, 20, 30+200*4, 20);
+  line(30, 20 + row*3 ,30+200*4 ,20 + row*3);
 
   //draw tick mark
+  //column
   fill(25,100,90);
   stroke(25,100,90);
   textFont(numFont, 8);
   textAlign(CENTER, BOTTOM);
   for(int i=0; i<21; i++){
-    text(i*10, 20+i*40, 17); 
-    line(20+i*40,17,20+i*40,19);
+    text(i*10, 30+i*40, 15); 
+    line(30+i*40,15,30+i*40,19);
   }
+  //row
   fill(90,100,100);
   stroke(90,100,100);
   textAlign(RIGHT, CENTER);
   for(int i=0; i<21; i++){
-    text(i*10, 17, 20+i*30); 
-    line(17,20+i*30,19,20+i*30);
+    text(i*10, 25, 20+i*30); 
+    line(25,20+i*30,29,20+i*30);
   }
 }
 
@@ -315,7 +302,6 @@ void serialEvent(Serial p){
   print(header);
   println("received");
   header = int(header);
-  // if(header != 0) header++;
   print("next is ");
   println(header);
   if(header < row){
@@ -353,6 +339,7 @@ void dropEvent(DropEvent theDropEvent) {
     println("### loading image ...");
     dimg = theDropEvent.loadImage();
     simg = theDropEvent.loadImage();
+    img = createImage(simg.width, simg.height, HSB);
     dimgConvert = true;
   }
 }
