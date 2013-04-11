@@ -316,8 +316,8 @@ void serialEvent(Serial p){
   print("next is ");
   println(header);
   if(header < row-1){
-    for(int i=0; i<column; i++){
-      port.write(pixelBin[header][i]);
+    for(int i=0; i<maxColumn; i++){
+      port.write(displayBin[header][i]);
     }
     port.write(footer);
     print(header);
