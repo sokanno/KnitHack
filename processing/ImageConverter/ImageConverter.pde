@@ -326,6 +326,7 @@ void serialEvent(Serial p){
     print(header);
     println("sent");
     sendStatus[header][0] = true;
+    completeFlag = false;
     sent.trigger();
     }else if(header == row-1 && !completeFlag){
       println("completed!");
