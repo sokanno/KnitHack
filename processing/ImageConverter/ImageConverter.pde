@@ -23,6 +23,7 @@ AudioSample ready;
 AudioSample sent;
 AudioSample done;
 AudioSample reset;
+AudioSample error;
 
 boolean resizeFlag = true;
 boolean dimgConvert = true;
@@ -134,6 +135,7 @@ void setup() {
   sent = minim.loadSample("sent.aif", 512);
   done = minim.loadSample("done.aif", 1024);
   reset = minim.loadSample("reset.aif", 1024);  
+  error = minim.loadSample("error.aif", 512);
 }
 
 void draw() {
@@ -315,7 +317,7 @@ void serialEvent(Serial p){
   // if(header != 0) header++;
   print("next is ");
   println(header);
-  if(header < row-1){
+  if(header < row){
     for(int i=0; i<maxColumn; i++){
       port.write(displayBin[header][i]);
     }
@@ -324,13 +326,15 @@ void serialEvent(Serial p){
     println("sent");
     sendStatus[header][0] = true;
     sent.trigger();
-    }else if(header == row-1){
+    }else if(header == row){
       println("completed!");
       done.trigger();
       for(int i=0; i<row; i++){
        sendStatus[i][0] = false;
        header = 0;
       }
+    }else{
+      error.trigger();
     }
 }
 
