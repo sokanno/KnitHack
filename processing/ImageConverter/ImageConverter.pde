@@ -69,7 +69,7 @@ void setup() {
   cp5.addSlider("column")
     .setPosition(850, 70)
       .setSize(200, 30)
-        .setRange(32, 200)
+        .setRange(32, 198)
           .setValue(64)
             .setColorValue(color(25, 100, 90));        
 
@@ -190,6 +190,8 @@ void draw() {
         if(i<row){
           if(j>=margin && j<column+margin){
             displayBin[i][j] = pixelBin[i][j-margin];
+          }else if(j==margin -1 || j==column+margin){
+            displayBin[i][j] = 1;
           }else{
             displayBin[i][j] = 2;
           }
