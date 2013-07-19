@@ -81,12 +81,20 @@ void setup() {
             .setColorValue(color(90, 100, 100));  
 
   cp5.addButton("Reset")
+    .setPosition(850, 541)
+      .setSize(100, 30);
+      
+  cp5.addButton("Save")
     .setPosition(850, 591)
+      .setSize(100, 30);
+
+  cp5.addButton("Load")
+    .setPosition(970, 591)
       .setSize(100, 30);
 
   cp5.addButton("Connect")
     .setPosition(850, 641)
-      .setSize(203, 30);
+      .setSize(220, 30);
 
   cp5.getController("threshold")
     .getCaptionLabel()
@@ -115,6 +123,16 @@ void setup() {
       .setFont(cfont)
         .setSize(16);
 
+  cp5.getController("Save")
+    .getCaptionLabel()
+      .setFont(cfont)
+        .setSize(16);
+        
+  cp5.getController("Load")
+    .getCaptionLabel()
+      .setFont(cfont)
+        .setSize(16);
+        
   drop = new SDrop(this);
 
   for (int i=0; i<maxRow; i++) {
@@ -151,12 +169,12 @@ void draw() {
       oimg.resize(0, 355);
     }
     oimg.updatePixels();
-    image(oimg, 850, 215);
+    image(oimg, 850, 190);
     image(title, 30, 640);
     fill(0, 0, 100);
     textFont(pfont, 16);
     textAlign(LEFT, BOTTOM);
-    text("original", 850, 200);
+    text("original", 850, 183);
   }
 
   if (img != null) {
@@ -310,6 +328,14 @@ public void Connect() {
 //   int a = p.read();
 //   println(a);
 // }
+
+public void Save(){
+  
+}
+
+public void Load(){
+  
+}
 
 void serialEvent(Serial p) {
   header = p.read();
