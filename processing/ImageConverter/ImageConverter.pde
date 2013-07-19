@@ -330,7 +330,14 @@ public void Connect() {
 // }
 
 public void Save(){
-  
+  byte[] saveBin = new byte[maxRow*maxColumn];
+  for (int i=0; i<maxRow; i++) {
+      for (int j=0; j<maxColumn; j++) {
+        saveBin[i*j] = byte(displayBin[i][j]);
+      }
+  }
+  saveBytes("test.dat", saveBin);
+  println("done saving");
 }
 
 public void Load(){
