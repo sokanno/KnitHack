@@ -1,6 +1,6 @@
 /*
 Image Converter for hacked Brother KH970.
- 2013 April
+ 2013 August
  So Kanno
  */
 
@@ -9,6 +9,7 @@ import javax.swing.*;
 import sojamo.drop.*;
 import processing.serial.*;
 import ddf.minim.*;
+import javax.swing.*;
 
 ControlP5 cp5;
 PImage dimg;  //for drag and drop function
@@ -24,6 +25,9 @@ AudioSample sent;
 AudioSample done;
 AudioSample reset;
 AudioSample error;
+
+// true is loading Image data, false is loading saved ".dat" mode.
+boolean loadMode = true; 
 
 boolean completeFlag = false;
 boolean resizeFlag = true;
@@ -83,7 +87,7 @@ void setup() {
   cp5.addButton("Reset")
     .setPosition(850, 541)
       .setSize(100, 30);
-      
+
   cp5.addButton("Save")
     .setPosition(850, 591)
       .setSize(100, 30);
@@ -127,12 +131,12 @@ void setup() {
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
-        
+
   cp5.getController("Load")
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
-        
+
   drop = new SDrop(this);
 
   for (int i=0; i<maxRow; i++) {
@@ -157,64 +161,71 @@ void draw() {
 
   background(15, 5, 15);
 
-  if (dimgConvert) {
-    oimg = dimg;
-    dimgConvert = false;
-    println("image loaded");
-  }
+  if (loadMode) {
 
-  if (oimg != null) {
-    oimg.resize(285, 0);
-    if (oimg.height >= 355) {
-      oimg.resize(0, 355);
+    if (dimgConvert) {
+      oimg = dimg;
+      dimgConvert = false;
+      println("image loaded");
     }
-    oimg.updatePixels();
-    image(oimg, 850, 190);
-    image(title, 30, 640);
-    fill(0, 0, 100);
-    textFont(pfont, 16);
-    textAlign(LEFT, BOTTOM);
-    text("original", 850, 183);
-  }
 
-  if (img != null) {
-    img = simg.get(0, 0, simg.width, simg.height);
-    img.resize(column, row);
-    img.updatePixels();
-    img.loadPixels();
+    if (oimg != null) {
+      oimg.resize(285, 0);
+      if (oimg.height >= 355) {
+        oimg.resize(0, 355);
+      }
+      oimg.updatePixels();
+      image(oimg, 850, 190);
+      image(title, 30, 640);
+      fill(0, 0, 100);
+      textFont(pfont, 16);
+      textAlign(LEFT, BOTTOM);
+      text("original", 850, 183);
+    }
 
-    //converting Image to black and white(1/0)array "pixelBin[][]"
-    pixelBin = new int[row][column];
-    for (int i=0; i<row; i++) {
-      for (int j=0; j<column; j++) {
-        color c = img.pixels[(i*column)+j];
-        int b = int(brightness(c));
-        if (b > threshold) {
-          pixelBin[i][j] = 1;
-        } else if (b <= threshold) {
-          pixelBin[i][j] = 0;
+    if (img != null) {
+      img = simg.get(0, 0, simg.width, simg.height);
+      img.resize(column, row);
+      img.updatePixels();
+      img.loadPixels();
+
+      //converting Image to black and white(1/0)array "pixelBin[][]"
+      pixelBin = new int[row][column];
+      for (int i=0; i<row; i++) {
+        for (int j=0; j<column; j++) {
+          color c = img.pixels[(i*column)+j];
+          int b = int(brightness(c));
+          if (b > threshold) {
+            pixelBin[i][j] = 1;
+          } 
+          else if (b <= threshold) {
+            pixelBin[i][j] = 0;
+          }
         }
       }
-    }
 
-    //converting "pixelBin[][]" to "displayBin[][]" for displaying
-    for (int i=0; i<maxRow; i++) {
-      for (int j=0; j<maxColumn; j++) {
-        int margin = (maxColumn - column)/2;
-        if (i<row) {
-          if (j>=margin && j<column+margin) {
-            displayBin[i][j] = pixelBin[i][j-margin];
-          } else if (j==margin -1 || j==column+margin) {
-            displayBin[i][j] = 1;
-          } else {
+      //converting "pixelBin[][]" to "displayBin[][]" for displaying
+      for (int i=0; i<maxRow; i++) {
+        for (int j=0; j<maxColumn; j++) {
+          int margin = (maxColumn - column)/2;
+          if (i<row) {
+            if (j>=margin && j<column+margin) {
+              displayBin[i][j] = pixelBin[i][j-margin];
+            } 
+            else if (j==margin -1 || j==column+margin) {
+              displayBin[i][j] = 1;
+            } 
+            else {
+              displayBin[i][j] = 2;
+            }
+          } 
+          else {  
             displayBin[i][j] = 2;
           }
-        } else {  
-          displayBin[i][j] = 2;
         }
       }
     }
-
+  }
     //displaying displayBin[][]
     for (int i=0; i<maxRow; i++) {
       for (int j=0; j<maxColumn; j++) {
@@ -226,22 +237,26 @@ void draw() {
             h = 0;
             s = 0;
             b = 100;//white
-          } else {
+          } 
+          else {
             h = 17;
             s = 100;
             b = 100;//yellow
           }
-        } else if (displayBin[i][j] == 0) {
+        } 
+        else if (displayBin[i][j] == 0) {
           if (sendStatus[i][0] == false) {
             h = 0;
             s = 0;
             b = 0;//black
-          } else {
+          } 
+          else {
             h = 55;
             s = 100;
             b = 90;//blue
           }
-        } else if (displayBin[i][j] == 2) {
+        } 
+        else if (displayBin[i][j] == 2) {
           h = 0;
           s = 0;
           b = 20;//grey
@@ -251,7 +266,7 @@ void draw() {
         rect(30+j*4, 20+i*3, 4, 3);
       }
     }
-  }
+  
 
   //draw column line and row line
   stroke(25, 100, 90);//lime green
@@ -279,6 +294,13 @@ void draw() {
     text(i*10, 25, 20+i*30); 
     line(25, 20+i*30, 29, 20+i*30);
   }
+
+
+
+
+  if (getFile != null) {
+    fileLoader();
+  }
 }
 
 public void Reset(int theValue) {
@@ -294,7 +316,8 @@ public void SendtoKnittingMachine(int theValue) {
   for (int i=0; i<maxColumn; i++) {
     if (displayBin[header][i] == 2) {
       port.write(0);
-    } else {
+    } 
+    else {
       port.write(displayBin[header][i]);
     }
   }
@@ -329,21 +352,6 @@ public void Connect() {
 //   println(a);
 // }
 
-public void Save(){
-  byte[] saveBin = new byte[maxRow*maxColumn];
-  for (int i=0; i<maxRow; i++) {
-      for (int j=0; j<maxColumn; j++) {
-        saveBin[i*j] = byte(displayBin[i][j]);
-      }
-  }
-  saveBytes("test.dat", saveBin);
-  println("done saving");
-}
-
-public void Load(){
-  
-}
-
 void serialEvent(Serial p) {
   header = p.read();
   print(header);
@@ -361,7 +369,8 @@ void serialEvent(Serial p) {
     sendStatus[header][0] = true;
     completeFlag = false;
     sent.trigger();
-  } else if (header == row-1 && !completeFlag) {
+  } 
+  else if (header == row-1 && !completeFlag) {
     println("completed!");
     done.trigger();
     for (int i=0; i<row-1; i++) {
@@ -369,7 +378,8 @@ void serialEvent(Serial p) {
       header = 0;
     }
     completeFlag = true;
-  } else {
+  } 
+  else {
     error.trigger();
   }
 }
@@ -389,5 +399,74 @@ void dropEvent(DropEvent theDropEvent) {
     img = createImage(simg.width, simg.height, HSB);
     dimgConvert = true;
   }
+}
+
+public void Save() {
+  byte[] saveBin = new byte[maxRow*maxColumn];
+  for (int i=0; i<maxRow; i++) {
+    for (int j=0; j<maxColumn; j++) {
+      saveBin[i*maxColumn+j] = byte(displayBin[i][j]);
+    }
+  }
+  saveBytes("test.dat", saveBin);
+  println("done saving");
+}
+
+public void Load(int theValue) {
+  getFile = getFileName();
+}
+
+//ファイルを取り込むファンクション 
+void fileLoader() {
+  //選択ファイルパスのドット以降の文字列を取得
+  String ext = getFile.substring(getFile.lastIndexOf('.') + 1);
+  //その文字列を小文字にする
+  ext.toLowerCase();
+  //文字列末尾がdatであれば 
+  if (ext.equals("dat")) {
+    loadMode = false;
+    println("lets read data");
+    int[] loadBin = new int[maxRow*maxColumn];
+    loadBin = int(loadBytes(getFile));
+    println("data loaded");
+
+    for (int i=0; i<maxRow; i++) {
+      for (int j=0; j<maxColumn; j++) {
+        displayBin[i][j] = int(loadBin[i*maxColumn+j]);
+      }
+    }
+    //    println(loadBin);
+  }
+  //選択ファイルパスを空に戻す
+  getFile = null;
+}
+
+//ファイル選択画面、選択ファイルパス取得の処理 
+String getFileName() {
+  //処理タイミングの設定 
+  SwingUtilities.invokeLater(new Runnable() { 
+    public void run() {
+      try {
+        //ファイル選択画面表示 
+        JFileChooser fc = new JFileChooser(); 
+        int returnVal = fc.showOpenDialog(null);
+        //「開く」ボタンが押された場合
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          //選択ファイル取得 
+          File file = fc.getSelectedFile();
+          //選択ファイルのパス取得 
+          getFile = file.getPath();
+        }
+      }
+      //上記以外の場合 
+      catch (Exception e) {
+        //エラー出力 
+        e.printStackTrace();
+      }
+    }
+  } 
+  );
+  //選択ファイルパス取得
+  return getFile;
 }
 
