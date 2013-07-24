@@ -155,6 +155,7 @@ void setup() {
   done = minim.loadSample("done.aif", 1024);
   reset = minim.loadSample("reset.aif", 1024);  
   error = minim.loadSample("error.aif", 512);
+
 }
 
 void draw() {
@@ -226,47 +227,47 @@ void draw() {
       }
     }
   }
-    //displaying displayBin[][]
-    for (int i=0; i<maxRow; i++) {
-      for (int j=0; j<maxColumn; j++) {
-        float h = 0;
-        float s = 0;
-        float b = 0;        
-        if (displayBin[i][j] == 1) {
-          if (sendStatus[i][0] == false) {
-            h = 0;
-            s = 0;
-            b = 100;//white
-          } 
-          else {
-            h = 17;
-            s = 100;
-            b = 100;//yellow
-          }
-        } 
-        else if (displayBin[i][j] == 0) {
-          if (sendStatus[i][0] == false) {
-            h = 0;
-            s = 0;
-            b = 0;//black
-          } 
-          else {
-            h = 55;
-            s = 100;
-            b = 90;//blue
-          }
-        } 
-        else if (displayBin[i][j] == 2) {
+  //displaying displayBin[][]
+  for (int i=0; i<maxRow; i++) {
+    for (int j=0; j<maxColumn; j++) {
+      float h = 0;
+      float s = 0;
+      float b = 0;        
+      if (displayBin[i][j] == 1) {
+        if (sendStatus[i][0] == false) {
           h = 0;
           s = 0;
-          b = 20;//grey
+          b = 100;//white
+        } 
+        else {
+          h = 17;
+          s = 100;
+          b = 100;//yellow
         }
-        stroke(0, 0, strokeColor);
-        fill(h, s, b);
-        rect(30+j*4, 20+i*3, 4, 3);
+      } 
+      else if (displayBin[i][j] == 0) {
+        if (sendStatus[i][0] == false) {
+          h = 0;
+          s = 0;
+          b = 0;//black
+        } 
+        else {
+          h = 55;
+          s = 100;
+          b = 90;//blue
+        }
+      } 
+      else if (displayBin[i][j] == 2) {
+        h = 0;
+        s = 0;
+        b = 20;//grey
       }
+      stroke(0, 0, strokeColor);
+      fill(h, s, b);
+      rect(30+j*4, 20+i*3, 4, 3);
     }
-  
+  }
+
 
   //draw column line and row line
   stroke(25, 100, 90);//lime green
@@ -296,177 +297,9 @@ void draw() {
   }
 
 
-
-
   if (getFile != null) {
     fileLoader();
   }
 }
 
-public void Reset(int theValue) {
-  header = 0;
-  for (int i=0; i<row; i++) {
-    sendStatus[i][0] = false;
-  }
-  reset.trigger();
-}
-
-public void SendtoKnittingMachine(int theValue) {
-  //sending pixelBin[][] to knitting Machine! 
-  for (int i=0; i<maxColumn; i++) {
-    if (displayBin[header][i] == 2) {
-      port.write(0);
-    } 
-    else {
-      port.write(displayBin[header][i]);
-    }
-  }
-  port.write(footer);
-  print(header);
-  println("sent");
-  sendStatus[header][0] = true;
-  header++;
-  ready.trigger();
-}
-
-public void Connect() {
-  String portName = Serial.list()[0];
-  println(Serial.list());
-  port = new Serial(this, portName, 57600);
-  port.clear();
-  done.trigger();
-  cp5.remove("Connect");
-  ControlFont cfont = new ControlFont(pfont, 16); 
-
-  cp5.addButton("SendtoKnittingMachine")
-    .setPosition(850, 641)
-      .setSize(203, 30);
-  cp5.getController("SendtoKnittingMachine")
-    .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
-}
-
-// void serialEvent(Serial p) {
-//   int a = p.read();
-//   println(a);
-// }
-
-void serialEvent(Serial p) {
-  header = p.read();
-  print(header);
-  println("received");
-  header = int(header);
-  print("next is ");
-  println(header);
-  if (header < row) {
-    for (int i=0; i<maxColumn; i++) {
-      port.write(displayBin[header][i]);
-    }
-    port.write(footer);
-    print(header);
-    println("sent");
-    sendStatus[header][0] = true;
-    completeFlag = false;
-    sent.trigger();
-  } 
-  else if (header == row-1 && !completeFlag) {
-    println("completed!");
-    done.trigger();
-    for (int i=0; i<row-1; i++) {
-      sendStatus[i][0] = false;
-      header = 0;
-    }
-    completeFlag = true;
-  } 
-  else {
-    error.trigger();
-  }
-}
-
-void dropEvent(DropEvent theDropEvent) {
-  println("");
-  println("isFile()\t"+theDropEvent.isFile());
-  println("isImage()\t"+theDropEvent.isImage());
-  println("isURL()\t"+theDropEvent.isURL());
-
-  // if the dropped object is an image, then 
-  // load the image into our PImage.
-  if (theDropEvent.isImage()) {
-    println("### loading image ...");
-    dimg = theDropEvent.loadImage();
-    simg = theDropEvent.loadImage();
-    img = createImage(simg.width, simg.height, HSB);
-    dimgConvert = true;
-  }
-}
-
-public void Save() {
-  byte[] saveBin = new byte[maxRow*maxColumn];
-  for (int i=0; i<maxRow; i++) {
-    for (int j=0; j<maxColumn; j++) {
-      saveBin[i*maxColumn+j] = byte(displayBin[i][j]);
-    }
-  }
-  saveBytes("test.dat", saveBin);
-  println("done saving");
-}
-
-public void Load(int theValue) {
-  getFile = getFileName();
-}
-
-//ファイルを取り込むファンクション 
-void fileLoader() {
-  //選択ファイルパスのドット以降の文字列を取得
-  String ext = getFile.substring(getFile.lastIndexOf('.') + 1);
-  //その文字列を小文字にする
-  ext.toLowerCase();
-  //文字列末尾がdatであれば 
-  if (ext.equals("dat")) {
-    loadMode = false;
-    println("lets read data");
-    int[] loadBin = new int[maxRow*maxColumn];
-    loadBin = int(loadBytes(getFile));
-    println("data loaded");
-
-    for (int i=0; i<maxRow; i++) {
-      for (int j=0; j<maxColumn; j++) {
-        displayBin[i][j] = int(loadBin[i*maxColumn+j]);
-      }
-    }
-    //    println(loadBin);
-  }
-  //選択ファイルパスを空に戻す
-  getFile = null;
-}
-
-//ファイル選択画面、選択ファイルパス取得の処理 
-String getFileName() {
-  //処理タイミングの設定 
-  SwingUtilities.invokeLater(new Runnable() { 
-    public void run() {
-      try {
-        //ファイル選択画面表示 
-        JFileChooser fc = new JFileChooser(); 
-        int returnVal = fc.showOpenDialog(null);
-        //「開く」ボタンが押された場合
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          //選択ファイル取得 
-          File file = fc.getSelectedFile();
-          //選択ファイルのパス取得 
-          getFile = file.getPath();
-        }
-      }
-      //上記以外の場合 
-      catch (Exception e) {
-        //エラー出力 
-        e.printStackTrace();
-      }
-    }
-  } 
-  );
-  //選択ファイルパス取得
-  return getFile;
-}
 
