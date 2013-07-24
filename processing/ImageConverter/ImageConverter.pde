@@ -155,7 +155,6 @@ void setup() {
   done = minim.loadSample("done.aif", 1024);
   reset = minim.loadSample("reset.aif", 1024);  
   error = minim.loadSample("error.aif", 512);
-
 }
 
 void draw() {
@@ -168,20 +167,6 @@ void draw() {
       oimg = dimg;
       dimgConvert = false;
       println("image loaded");
-    }
-
-    if (oimg != null) {
-      oimg.resize(285, 0);
-      if (oimg.height >= 355) {
-        oimg.resize(0, 355);
-      }
-      oimg.updatePixels();
-      image(oimg, 850, 190);
-      image(title, 30, 640);
-      fill(0, 0, 100);
-      textFont(pfont, 16);
-      textAlign(LEFT, BOTTOM);
-      text("original", 850, 183);
     }
 
     if (img != null) {
@@ -227,6 +212,29 @@ void draw() {
       }
     }
   }
+
+  if (loadMode) {
+    if (oimg != null) {
+      oimg.resize(285, 0);
+      if (oimg.height >= 355) {
+        oimg.resize(0, 355);
+      }
+      oimg.updatePixels();
+      image(oimg, 850, 190);
+      image(title, 30, 640);
+      fill(0, 0, 100);
+      textFont(pfont, 16);
+      textAlign(LEFT, BOTTOM);
+      text("original", 850, 183);
+    }
+  }
+  else if (!loadMode) {
+    //if using .dat data mode, display that.
+    //I need to write code and make a image file
+//    loadImage()
+  }
+  
+  
   //displaying displayBin[][]
   for (int i=0; i<maxRow; i++) {
     for (int j=0; j<maxColumn; j++) {
@@ -297,9 +305,8 @@ void draw() {
   }
 
 
-  if (getFile != null) {
-    fileLoader();
-  }
+  //  if (getFile != null) {
+  //    fileLoader();
+  //  }
 }
-
 

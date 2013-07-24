@@ -12,5 +12,7 @@ void dropEvent(DropEvent theDropEvent) {
     simg = theDropEvent.loadImage();
     img = createImage(simg.width, simg.height, HSB);
     dimgConvert = true;
+    loadMode = true;
   }
 }
+
