@@ -225,9 +225,9 @@ void rotaryEncoder(){
       Serial.write(header);
       // header++;
       sendFlag = false;
-      if(header == 63){
-        header = 0;
-      }
+//      if(header == 63){
+//        header = 0;
+//      }
     }
   } 
   else if(encState2){
@@ -241,9 +241,9 @@ void rotaryEncoder(){
       Serial.write(header);
       // header++;
       sendFlag = false;
-      if(header == 63){
-        header = 0;
-      }
+//      if(header == 63){
+//        header = 0;
+//      }
     }
   } 
 }
