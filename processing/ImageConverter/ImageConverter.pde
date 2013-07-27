@@ -307,7 +307,10 @@ void draw() {
     text(i*10, 25, 20+i*30); 
     line(25, 20+i*30, 29, 20+i*30);
   }
-
+  
+  noSmooth();
+  textSize(16);
+  text("row "+header, 830, 651);
 
   //  if (getFile != null) {
   //    fileLoader();
