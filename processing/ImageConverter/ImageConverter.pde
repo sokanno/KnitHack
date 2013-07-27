@@ -17,6 +17,7 @@ PImage img;   //for displaying and sending image
 PImage oimg;  //for displaying original image
 PImage simg;  //keeping original size image
 PImage title;
+PImage dataModeImage;
 SDrop drop;
 Serial port;
 Minim minim;
@@ -62,6 +63,8 @@ void setup() {
   dimg = loadImage("default.gif");
   img = createImage(dimg.width, dimg.height, HSB);
   title = loadImage("title.gif");
+  dataModeImage = loadImage("dataMode.gif");
+
   cp5 = new ControlP5(this);
 
   cp5.addSlider("threshold")
@@ -74,14 +77,14 @@ void setup() {
     .setPosition(850, 70)
       .setSize(200, 30)
         .setRange(32, 198)
-          .setValue(64)
+//          .setValue(64)
             .setColorValue(color(25, 100, 90));        
 
   cp5.addSlider("row")
     .setPosition(850, 120)
       .setSize(200, 30)
         .setRange(32, 200)
-          .setValue(64)
+//          .setValue(64)
             .setColorValue(color(90, 100, 100));  
 
   cp5.addButton("Reset")
@@ -231,7 +234,8 @@ void draw() {
   else if (!loadMode) {
     //if using .dat data mode, display that.
     //I need to write code and make a image file
-//    loadImage()
+    dataModeImage.resize(285, 0);
+    image(dataModeImage,850, 190);
   }
   
   
