@@ -1,3 +1,8 @@
+public void change_mode(){
+  if(carriageMode == carriageK) carriageMode = carriageL;
+  else if(carriageMode == carriageL) carriageMode = carriageK;
+}
+
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
@@ -58,6 +63,7 @@ void serialEvent(Serial p) {
     for (int i=0; i<maxColumn; i++) {
       port.write(displayBin[header][i]);
     }
+    port.write(carriageMode);
     port.write(footer);
     print(header);
     println("sent");

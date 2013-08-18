@@ -5,11 +5,9 @@ Image Converter for hacked Brother KH970.
  */
 
 import controlP5.*;
-import javax.swing.*;
 import sojamo.drop.*;
 import processing.serial.*;
 import ddf.minim.*;
-import javax.swing.*;
 
 ControlP5 cp5;
 PImage dimg;  //for drag and drop function
@@ -28,8 +26,10 @@ AudioSample reset;
 AudioSample error;
 
 // true is loading Image data, false is loading saved ".dat" mode.
-boolean loadMode = true; 
-
+boolean loadMode = true;
+int carriageK = 124;
+int carriageL = 125;
+int carriageMode = carriageK;
 boolean completeFlag = false;
 boolean resizeFlag = true;
 boolean dimgConvert = true;
@@ -50,6 +50,8 @@ int header = 0;
 byte footer = 126;
 color lime = color(25, 100, 90);
 color pink = color(90, 100, 100);
+color modeK = color(35, 35, 30);
+color modeL = color(85, 85, 80);
 
 void setup() {
   size(1155, 690);
@@ -86,6 +88,10 @@ void setup() {
         .setRange(32, 200)
 //          .setValue(64)
             .setColorValue(color(90, 100, 100));  
+ 
+  cp5.addButton("change_mode")
+    .setPosition(850, 491)
+      .setSize(120, 30);
 
   cp5.addButton("Reset")
     .setPosition(850, 541)
@@ -121,6 +127,11 @@ void setup() {
           .setSize(16);
 
   cp5.getController("Connect")
+    .getCaptionLabel()
+      .setFont(cfont)
+        .setSize(16);
+
+  cp5.getController("change_mode")
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
@@ -161,8 +172,18 @@ void setup() {
 }
 
 void draw() {
+  colorMode(HSB, 100);
+  fill(0, 0, 100);
+  textFont(pfont, 16);
+  textAlign(LEFT, BOTTOM);
 
-  background(15, 5, 15);
+  if(carriageMode == carriageK){
+    background(modeK);
+    text("K carrige mode", 980, 515);
+  }else if(carriageMode == carriageL){
+    background(modeL);
+    text("L carrige mode", 980, 515);
+  }
 
   if (loadMode) {
 
@@ -219,8 +240,8 @@ void draw() {
   if (loadMode) {
     if (oimg != null) {
       oimg.resize(285, 0);
-      if (oimg.height >= 355) {
-        oimg.resize(0, 355);
+      if (oimg.height >= 285) {
+        oimg.resize(0, 285);
       }
       oimg.updatePixels();
       image(oimg, 850, 190);

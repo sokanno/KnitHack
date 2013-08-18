@@ -1,8 +1,8 @@
 /*
 Brother KH970 Controller
-2013 April
-Tomofumi Yoshida, So Kanno
-*/
+ 2013 April
+ Tomofumi Yoshida, So Kanno
+ */
 
 
 // #include <LiquidCrystal.h>
@@ -26,11 +26,14 @@ int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-int dataSize = 201;
+int dataSize = 202;
 boolean dataReplace = false;
 int header = 0;
 byte footer = 126;
 int columnNum = 0;
+byte carriageMode;
+byte carriageK = 124;
+byte carriageL = 125;
 
 //INPUT SYSTEM
 const int enc1 = 27;  //カウント用エンコーダ
@@ -119,8 +122,12 @@ void loop(){
 
   if(dataReplace){
     digitalWrite(13, HIGH);
-    for(int i=24; i<224; i++){
-      pixelBin[i] = receivedBin[i-24];
+    for(int i=24; i<225; i++){
+      if(i < 224){
+        pixelBin[i] = receivedBin[i-24];
+      }else if(i == 224){
+        carriageMode = receivedBin[i-24];
+      }
     }
     // for(int i=91; i<155; i++){
     //   pixelBin[i] = receivedBin[i-91];
@@ -169,31 +176,32 @@ void loop(){
   //  }
 
 
+  /*
   // 左側エンドスイッチが反応した時
-  if(zero != lastZero){
-    if(zero == LOW){      
-      // pos = 0;
-      if(carDirection == 2){
-        pos = 27;
-        // Serial.println("Lend");
-        // Serial.write(header);
-      }
-    } 
-  }
-
-
-  // 右側エンドスイッチが反応した時
-  if(right != lastRight){
-    if(right == LOW){
-      // pos = 200;
-      if(carDirection == 1){
-        pos = 228;
-        // Serial.println("Rend");
-        // Serial.write(header);
-      }
-    } 
-  }
-
+   if(zero != lastZero){
+   if(zero == LOW){      
+   // pos = 0;
+   if(carDirection == 2){
+   pos = 27;
+   // Serial.println("Lend");
+   // Serial.write(header);
+   }
+   } 
+   }
+   
+   
+   // 右側エンドスイッチが反応した時
+   if(right != lastRight){
+   if(right == LOW){
+   // pos = 200;
+   if(carDirection == 1){
+   pos = 228;
+   // Serial.println("Rend");
+   // Serial.write(header);
+   }
+   } 
+   }
+   */
 
   //段数計スイッチが反応した時
   if(barSwitch != lastBarSwitch){
@@ -217,33 +225,39 @@ void rotaryEncoder(){
   if(!encState2){
     carDirection = 1;
     pos++;
+//    Serial.println(pos);
     if(pos != 256){
       sendFlag = true;
       out1();
-    }else if(pos == 256 && sendFlag){
+    }
+    else if(pos == 256 && sendFlag){
       // Serial.println(256);
       Serial.write(header);
       // header++;
       sendFlag = false;
-//      if(header == 63){
-//        header = 0;
-//      }
+      //      if(header == 63){
+      //        header = 0;
+      //      }
     }
   } 
   else if(encState2){
     carDirection = 2;
     pos--;
-    if(pos != 0){
+//    Serial.println(pos);
+    if(pos != 1){
+//      if(pos == 1) pos = 0;
       sendFlag = true;
       out2();
-    }else if(pos == 0 && sendFlag){
+    }
+    else if(pos == 1 && sendFlag){
       // Serial.println(0);
       Serial.write(header);
       // header++;
       sendFlag = false;
-//      if(header == 63){
-//        header = 0;
-//      }
+      pos = 0;
+      //      if(header == 63){
+      //        header = 0;
+      //      }
     }
   } 
 }
@@ -255,8 +269,14 @@ void out1(){
   // lcd.write(pos);
   //needle1 = 31;
   //以降は順に46まで
-  if(pos > 15){
-    digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
+  if(carriageMode == carriageL){
+    if(pos > 15){
+      digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
+    }
+  }else if(carriageMode == carriageK){
+    if(pos > 15){
+      digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
+    }
   }
 }
 
@@ -267,8 +287,16 @@ void out2(){
   // lcd.clear();
   // lcd.write(pos);
   // int n = pixelBin[pos-11];
-  if(pos < 256-8){
-    digitalWrite((pos)%16+31,pixelBin[pos+8]);    
+  if(carriageMode == carriageL){
+    if(pos < 256-8){
+      digitalWrite((pos)%16+31,pixelBin[pos+1]);    
+    }
+  }else if(carriageMode == carriageK){
+    if(pos < 256-8){
+      digitalWrite((pos)%16+31,pixelBin[pos+8]);    
+    }
   }
 }
+
+
 
