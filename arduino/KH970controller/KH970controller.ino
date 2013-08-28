@@ -125,7 +125,8 @@ void loop(){
     for(int i=24; i<225; i++){
       if(i < 224){
         pixelBin[i] = receivedBin[i-24];
-      }else if(i == 224){
+      }
+      else if(i == 224){
         carriageMode = receivedBin[i-24];
       }
     }
@@ -176,32 +177,34 @@ void loop(){
   //  }
 
 
-  /*
+  //rotation data correction
   // 左側エンドスイッチが反応した時
-   if(zero != lastZero){
-   if(zero == LOW){      
-   // pos = 0;
-   if(carDirection == 2){
-   pos = 27;
-   // Serial.println("Lend");
-   // Serial.write(header);
-   }
-   } 
-   }
-   
-   
-   // 右側エンドスイッチが反応した時
-   if(right != lastRight){
-   if(right == LOW){
-   // pos = 200;
-   if(carDirection == 1){
-   pos = 228;
-   // Serial.println("Rend");
-   // Serial.write(header);
-   }
-   } 
-   }
-   */
+  if(carriageMode == carriageK){
+    if(zero != lastZero){
+      if(zero == LOW){      
+        // pos = 0;
+        if(carDirection == 2){
+          pos = 27;
+          // Serial.println("Lend");
+          // Serial.write(header);
+        }
+      } 
+    }
+
+
+    // 右側エンドスイッチが反応した時
+    if(right != lastRight){
+      if(right == LOW){
+        // pos = 200;
+        if(carDirection == 1){
+          pos = 228;
+          // Serial.println("Rend");
+          // Serial.write(header);
+        }
+      } 
+    }
+  }
+
 
   //段数計スイッチが反応した時
   if(barSwitch != lastBarSwitch){
@@ -225,7 +228,7 @@ void rotaryEncoder(){
   if(!encState2){
     carDirection = 1;
     pos++;
-//    Serial.println(pos);
+    //    Serial.println(pos);
     if(pos != 256){
       sendFlag = true;
       out1();
@@ -243,9 +246,9 @@ void rotaryEncoder(){
   else if(encState2){
     carDirection = 2;
     pos--;
-//    Serial.println(pos);
+    //    Serial.println(pos);
     if(pos != 1){
-//      if(pos == 1) pos = 0;
+      //      if(pos == 1) pos = 0;
       sendFlag = true;
       out2();
     }
@@ -273,7 +276,8 @@ void out1(){
     if(pos > 15){
       digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
     }
-  }else if(carriageMode == carriageK){
+  }
+  else if(carriageMode == carriageK){
     if(pos > 15){
       digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
     }
@@ -291,12 +295,14 @@ void out2(){
     if(pos < 256-8){
       digitalWrite((pos)%16+31,pixelBin[pos+1]);    
     }
-  }else if(carriageMode == carriageK){
+  }
+  else if(carriageMode == carriageK){
     if(pos < 256-8){
       digitalWrite((pos)%16+31,pixelBin[pos+8]);    
     }
   }
 }
+
 
 
 
