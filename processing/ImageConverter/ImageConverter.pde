@@ -53,6 +53,8 @@ color pink = color(90, 100, 100);
 color modeK = color(35, 35, 30);
 color modeL = color(85, 85, 80);
 
+boolean meshSwitch = false;
+
 void setup() {
   size(1155, 690);
   colorMode(HSB, 100);
@@ -179,10 +181,10 @@ void draw() {
 
   if(carriageMode == carriageK){
     background(modeK);
-    text("K carrige mode", 980, 515);
+    text("K carriage mode", 980, 515);
   }else if(carriageMode == carriageL){
     background(modeL);
-    text("L carrige mode", 980, 515);
+    text("L carriage mode", 980, 515);
   }
 
   if (loadMode) {
@@ -212,6 +214,18 @@ void draw() {
             pixelBin[i][j] = 0;
           }
         }
+        // add a meshing function for L carriage mode
+//        if(carriageMode == carriageL){
+//          if(meshSwitch){
+//            for (int i=0; i<row; i++) {
+//              for (int j=0; j<column; j++) {
+//                
+//              }
+//            }
+//          }else if(!meshSwitch){
+//            
+//          }
+//        }
       }
 
       //converting "pixelBin[][]" to "displayBin[][]" for displaying

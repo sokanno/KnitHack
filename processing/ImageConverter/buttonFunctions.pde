@@ -1,32 +1,30 @@
 public void change_mode(){
-  if(carriageMode == carriageK) carriageMode = carriageL;
-  else if(carriageMode == carriageL) carriageMode = carriageK;
+  if(carriageMode == carriageK){
+    carriageMode = carriageL;
+    ControlFont cfont = new ControlFont(pfont, 16);   
+    cp5.addButton("MeshSwitch")
+      .setPosition(970, 541)
+        .setSize(110, 30);
+    cp5.getController("MeshSwitch")
+      .getCaptionLabel()
+        .setFont(cfont)
+          .setSize(16);
+  }
+  else if(carriageMode == carriageL){
+    carriageMode = carriageK;
+    cp5.remove("MeshSwitch");
+  }
 }
 
+public void MeshSwitch(){
+  meshSwitch = !meshSwitch;
+}
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
     sendStatus[i][0] = false;
   }
   reset.trigger();
-}
-
-public void SendtoKnittingMachine(int theValue) {
-  //sending pixelBin[][] to knitting Machine! 
-  for (int i=0; i<maxColumn; i++) {
-    if (displayBin[header][i] == 2) {
-      port.write(0);
-    } 
-    else {
-      port.write(displayBin[header][i]);
-    }
-  }
-  port.write(footer);
-  print(header);
-  println("sent");
-  sendStatus[header][0] = true;
-  header++;
-  ready.trigger();
 }
 
 public void Connect() {
@@ -51,6 +49,25 @@ public void Connect() {
 //   int a = p.read();
 //   println(a);
 // }
+
+public void SendtoKnittingMachine(int theValue) {
+  //sending pixelBin[][] to knitting Machine! 
+  for (int i=0; i<maxColumn; i++) {
+    if (displayBin[header][i] == 2) {
+      port.write(0);
+    } 
+    else {
+      port.write(displayBin[header][i]);
+    }
+  }
+  port.write(carriageMode);
+  port.write(footer);
+  print(header);
+  println("sent");
+  sendStatus[header][0] = true;
+  header++;
+  ready.trigger();
+}
 
 void serialEvent(Serial p) {
   header = p.read();

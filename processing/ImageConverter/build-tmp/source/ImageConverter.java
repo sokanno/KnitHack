@@ -74,6 +74,8 @@ int pink = color(90, 100, 100);
 int modeK = color(35, 35, 30);
 int modeL = color(85, 85, 80);
 
+boolean meshSwitch = false;
+
 public void setup() {
   size(1155, 690);
   colorMode(HSB, 100);
@@ -200,10 +202,10 @@ public void draw() {
 
   if(carriageMode == carriageK){
     background(modeK);
-    text("K carrige mode", 980, 515);
+    text("K carriage mode", 980, 515);
   }else if(carriageMode == carriageL){
     background(modeL);
-    text("L carrige mode", 980, 515);
+    text("L carriage mode", 980, 515);
   }
 
   if (loadMode) {
@@ -231,6 +233,18 @@ public void draw() {
           } 
           else if (b <= threshold) {
             pixelBin[i][j] = 0;
+          }
+        }
+        // add a meshing function for L carriage mode
+        if(carriageMode == carriageL){
+          if(meshSwitch){
+            for (int i=0; i<row; i++) {
+              for (int j=0; j<column; j++) {
+                
+              }
+            }
+          }else if(!meshSwitch){
+            
           }
         }
       }
@@ -360,10 +374,26 @@ public void draw() {
 }
 
 public void change_mode(){
-  if(carriageMode == carriageK) carriageMode = carriageL;
-  else if(carriageMode == carriageL) carriageMode = carriageK;
+  if(carriageMode == carriageK){
+    carriageMode = carriageL;
+    ControlFont cfont = new ControlFont(pfont, 16);   
+    cp5.addButton("MeshSwitch")
+      .setPosition(970, 541)
+        .setSize(110, 30);
+    cp5.getController("MeshSwitch")
+      .getCaptionLabel()
+        .setFont(cfont)
+          .setSize(16);
+  }
+  else if(carriageMode == carriageL){
+    carriageMode = carriageK;
+    cp5.remove("MeshSwitch");
+  }
 }
 
+public void MeshSwitch(){
+  meshSwitch = !meshSwitch;
+}
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
@@ -424,6 +454,7 @@ public void serialEvent(Serial p) {
     for (int i=0; i<maxColumn; i++) {
       port.write(displayBin[header][i]);
     }
+    port.write(carriageMode);
     port.write(footer);
     print(header);
     println("sent");
