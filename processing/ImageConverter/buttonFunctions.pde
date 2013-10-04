@@ -2,23 +2,35 @@ public void change_mode(){
   if(carriageMode == carriageK){
     carriageMode = carriageL;
     ControlFont cfont = new ControlFont(pfont, 16);   
-    cp5.addButton("MeshSwitch")
-      .setPosition(970, 541)
-        .setSize(110, 30);
-    cp5.getController("MeshSwitch")
+    cp5.addButton("Mesh_rev")
+      .setPosition(850, 541)
+        .setSize(120, 30);
+    cp5.getController("Mesh_rev")
+      .getCaptionLabel()
+        .setFont(cfont)
+          .setSize(16);
+    cp5.addButton("Mesh_Phase")
+      .setPosition(990, 541)
+        .setSize(120, 30);
+    cp5.getController("Mesh_Phase")
       .getCaptionLabel()
         .setFont(cfont)
           .setSize(16);
   }
   else if(carriageMode == carriageL){
     carriageMode = carriageK;
-    cp5.remove("MeshSwitch");
+    cp5.remove("Mesh_rev");
   }
 }
 
-public void MeshSwitch(){
+public void Mesh_rev(){
   meshSwitch = !meshSwitch;
 }
+
+public void Mesh_Phase(){
+  meshPhase = !meshPhase;
+}
+
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
@@ -36,10 +48,10 @@ public void Connect() {
   cp5.remove("Connect");
   ControlFont cfont = new ControlFont(pfont, 16); 
 
-  cp5.addButton("SendtoKnittingMachine")
+  cp5.addButton("Send_to_KnittingMachine")
     .setPosition(850, 641)
-      .setSize(203, 30);
-  cp5.getController("SendtoKnittingMachine")
+      .setSize(260, 30);
+  cp5.getController("Send_to_KnittingMachine")
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
@@ -50,7 +62,7 @@ public void Connect() {
 //   println(a);
 // }
 
-public void SendtoKnittingMachine(int theValue) {
+public void Send_to_KnittingMachine(int theValue) {
   //sending pixelBin[][] to knitting Machine! 
   for (int i=0; i<maxColumn; i++) {
     if (displayBin[header][i] == 2) {

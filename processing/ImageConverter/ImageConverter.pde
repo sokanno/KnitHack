@@ -54,6 +54,7 @@ color modeK = color(35, 35, 30);
 color modeL = color(85, 85, 80);
 
 boolean meshSwitch = false;
+boolean meshPhase = true;
 
 void setup() {
   size(1155, 690);
@@ -96,20 +97,20 @@ void setup() {
       .setSize(120, 30);
 
   cp5.addButton("Reset")
-    .setPosition(850, 541)
-      .setSize(100, 30);
+    .setPosition(850, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Save")
-    .setPosition(850, 591)
-      .setSize(100, 30);
+    .setPosition(940, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Load")
-    .setPosition(970, 591)
-      .setSize(100, 30);
+    .setPosition(1030, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Connect")
     .setPosition(850, 641)
-      .setSize(220, 30);
+      .setSize(260, 30);
 
   cp5.getController("threshold")
     .getCaptionLabel()
@@ -181,10 +182,10 @@ void draw() {
 
   if(carriageMode == carriageK){
     background(modeK);
-    text("K carriage mode", 980, 515);
+    text("K carriage mode", 990, 515);
   }else if(carriageMode == carriageL){
     background(modeL);
-    text("L carriage mode", 980, 515);
+    text("L carriage mode", 990, 515);
   }
 
   if (loadMode) {
@@ -214,18 +215,52 @@ void draw() {
             pixelBin[i][j] = 0;
           }
         }
+      }
         // add a meshing function for L carriage mode
-//        if(carriageMode == carriageL){
-//          if(meshSwitch){
-//            for (int i=0; i<row; i++) {
-//              for (int j=0; j<column; j++) {
-//                
-//              }
-//            }
-//          }else if(!meshSwitch){
-//            
-//          }
-//        }
+      if(carriageMode == carriageL){
+        if(!meshSwitch){
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
+              else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
+            }
+          }
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(meshPhase){
+                if(j%2 == 0 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 1 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }else if(!meshPhase){
+                if(j%2 == 1 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 0 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }
+            }
+          }
+        }else if(meshSwitch){
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(meshPhase){
+                if(j%2 == 0 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 1 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }else if(!meshPhase){
+                if(j%2 == 1 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 0 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }
+            }
+          }
+        }
       }
 
       //converting "pixelBin[][]" to "displayBin[][]" for displaying

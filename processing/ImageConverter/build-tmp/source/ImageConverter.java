@@ -75,6 +75,7 @@ int modeK = color(35, 35, 30);
 int modeL = color(85, 85, 80);
 
 boolean meshSwitch = false;
+boolean meshPhase = true;
 
 public void setup() {
   size(1155, 690);
@@ -117,20 +118,20 @@ public void setup() {
       .setSize(120, 30);
 
   cp5.addButton("Reset")
-    .setPosition(850, 541)
-      .setSize(100, 30);
+    .setPosition(850, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Save")
-    .setPosition(850, 591)
-      .setSize(100, 30);
+    .setPosition(940, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Load")
-    .setPosition(970, 591)
-      .setSize(100, 30);
+    .setPosition(1030, 591)
+      .setSize(80, 30);
 
   cp5.addButton("Connect")
     .setPosition(850, 641)
-      .setSize(220, 30);
+      .setSize(260, 30);
 
   cp5.getController("threshold")
     .getCaptionLabel()
@@ -202,10 +203,10 @@ public void draw() {
 
   if(carriageMode == carriageK){
     background(modeK);
-    text("K carriage mode", 980, 515);
+    text("K carriage mode", 990, 515);
   }else if(carriageMode == carriageL){
     background(modeL);
-    text("L carriage mode", 980, 515);
+    text("L carriage mode", 990, 515);
   }
 
   if (loadMode) {
@@ -235,16 +236,50 @@ public void draw() {
             pixelBin[i][j] = 0;
           }
         }
+      }
         // add a meshing function for L carriage mode
-        if(carriageMode == carriageL){
-          if(meshSwitch){
-            for (int i=0; i<row; i++) {
-              for (int j=0; j<column; j++) {
-                
+      if(carriageMode == carriageL){
+        if(!meshSwitch){
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
+              else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
+            }
+          }
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(meshPhase){
+                if(j%2 == 0 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 1 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }else if(!meshPhase){
+                if(j%2 == 1 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 0 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
               }
             }
-          }else if(!meshSwitch){
-            
+          }
+        }else if(meshSwitch){
+          for (int i=0; i<row; i++) {
+            for (int j=0; j<column; j++) {
+              if(meshPhase){
+                if(j%2 == 0 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 1 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }else if(!meshPhase){
+                if(j%2 == 1 && i%2 ==0){
+                    pixelBin[i][j] = 1;
+                }else if(j%2 == 0 && i%2 ==1){
+                    pixelBin[i][j] = 1;
+                }
+              }
+            }
           }
         }
       }
@@ -377,47 +412,41 @@ public void change_mode(){
   if(carriageMode == carriageK){
     carriageMode = carriageL;
     ControlFont cfont = new ControlFont(pfont, 16);   
-    cp5.addButton("MeshSwitch")
-      .setPosition(970, 541)
-        .setSize(110, 30);
-    cp5.getController("MeshSwitch")
+    cp5.addButton("Mesh_rev")
+      .setPosition(850, 541)
+        .setSize(120, 30);
+    cp5.getController("Mesh_rev")
+      .getCaptionLabel()
+        .setFont(cfont)
+          .setSize(16);
+    cp5.addButton("Mesh_Phase")
+      .setPosition(990, 541)
+        .setSize(120, 30);
+    cp5.getController("Mesh_Phase")
       .getCaptionLabel()
         .setFont(cfont)
           .setSize(16);
   }
   else if(carriageMode == carriageL){
     carriageMode = carriageK;
-    cp5.remove("MeshSwitch");
+    cp5.remove("Mesh_rev");
   }
 }
 
-public void MeshSwitch(){
+public void Mesh_rev(){
   meshSwitch = !meshSwitch;
 }
+
+public void Mesh_Phase(){
+  meshPhase = !meshPhase;
+}
+
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
     sendStatus[i][0] = false;
   }
   reset.trigger();
-}
-
-public void SendtoKnittingMachine(int theValue) {
-  //sending pixelBin[][] to knitting Machine! 
-  for (int i=0; i<maxColumn; i++) {
-    if (displayBin[header][i] == 2) {
-      port.write(0);
-    } 
-    else {
-      port.write(displayBin[header][i]);
-    }
-  }
-  port.write(footer);
-  print(header);
-  println("sent");
-  sendStatus[header][0] = true;
-  header++;
-  ready.trigger();
 }
 
 public void Connect() {
@@ -429,10 +458,10 @@ public void Connect() {
   cp5.remove("Connect");
   ControlFont cfont = new ControlFont(pfont, 16); 
 
-  cp5.addButton("SendtoKnittingMachine")
+  cp5.addButton("Send_to_KnittingMachine")
     .setPosition(850, 641)
-      .setSize(203, 30);
-  cp5.getController("SendtoKnittingMachine")
+      .setSize(260, 30);
+  cp5.getController("Send_to_KnittingMachine")
     .getCaptionLabel()
       .setFont(cfont)
         .setSize(16);
@@ -442,6 +471,25 @@ public void Connect() {
 //   int a = p.read();
 //   println(a);
 // }
+
+public void Send_to_KnittingMachine(int theValue) {
+  //sending pixelBin[][] to knitting Machine! 
+  for (int i=0; i<maxColumn; i++) {
+    if (displayBin[header][i] == 2) {
+      port.write(0);
+    } 
+    else {
+      port.write(displayBin[header][i]);
+    }
+  }
+  port.write(carriageMode);
+  port.write(footer);
+  print(header);
+  println("sent");
+  sendStatus[header][0] = true;
+  header++;
+  ready.trigger();
+}
 
 public void serialEvent(Serial p) {
   header = p.read();
