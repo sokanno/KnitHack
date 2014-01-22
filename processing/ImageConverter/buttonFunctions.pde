@@ -2,20 +2,20 @@ public void change_mode(){
   if(carriageMode == carriageK){
     carriageMode = carriageL;
     ControlFont cfont = new ControlFont(pfont, 16);   
-    cp5.addButton("Mesh_rev")
-      .setPosition(850, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_rev")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
-    cp5.addButton("Mesh_Phase")
-      .setPosition(990, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_Phase")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
+    // cp5.addButton("Mesh_rev")
+    //   .setPosition(850, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_rev")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
+    // cp5.addButton("Mesh_Phase")
+    //   .setPosition(990, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_Phase")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
   }
   else if(carriageMode == carriageL){
     carriageMode = carriageK;
