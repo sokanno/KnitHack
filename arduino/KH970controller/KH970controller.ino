@@ -5,9 +5,9 @@ Brother KH970 Controller
  */
 
 
-// #include <LiquidCrystal.h>
-
 char receivedBin[201];
+int RePixelBin[256];
+
 int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -35,29 +35,18 @@ byte carriageMode;
 byte carriageK = 124;
 byte carriageL = 125;
 
+int phase = 0;
+
 //INPUT SYSTEM
 const int enc1 = 27;  //カウント用エンコーダ
 const int enc2 = 26;  //回転方向検知用エンコーダ
-const int enc3 = 25;  //フェーズ更新用エンコーダ
+const int enc3 = 25;  //phase ditector 
 const int bar = 24;    //段数計スイッチ
-const int LEnd = 23;   //左エンドスイッチ
-const int REnd = 22;   //右エンドスイッチ
+const int LEnd = 23;   //Left End switch
+const int REnd = 22;   //Right End switch
 
 //OUTPUT SYSTEM
-// const int led1 = 6;    //インジケータLED
-// const int led2 = 7;    //インジケータLED
-// const int led3 = 13;    //キャリッジ移動インジケータ
-
 const int LED = 13;
-
-// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-// LCD RS to 12
-// LCD Enable to 11
-// LCD D4 to 5
-// LCD D5 to 4
-// LCD D6 to 3
-// LCD D7 to 2
-// LCD R/W to GND
 
 
 int pos = 0;  //キャリッジの現在位置
@@ -65,10 +54,8 @@ int lastPos = 0;
 int encState1 = 0;  //カウント用エンコーダの入力値
 int encState2 = 0;  //回転方向検知用エンコーダの入力値
 int lastState = 0;  //カウント用エンコーダの前回の値
-//int phaseState = 0; //フェーズ検知用エンコーダの入力値
-//int lastPhaseState = 0; //フェーズ検知用エンコーダの前回の値
-//int phase = 0;      //現在のフェーズ
-//int lastPhase = 0;
+
+
 int zero = 0;       //左エンドスイッチの入力値
 int lastZero = 0;   //左エンドスイッチの前回の値
 int right = 0;      //右エンドスイッチの入力値
@@ -96,9 +83,6 @@ void setup(){
   pinMode(LEnd, INPUT);
   pinMode(REnd, INPUT);
 
-  // pinMode(led1, OUTPUT);
-  // pinMode(led2, OUTPUT);
-  // pinMode(led3, OUTPUT);
   for(int i=31; i<47; i++){
     pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
@@ -106,6 +90,10 @@ void setup(){
   attachInterrupt(enc1, rotaryEncoder, RISING);
   Serial.begin(57600);
   // lcd.begin(16, 2);
+  
+  if(digitalRead(enc3)==false){  //phase ditection
+    phase = 1;
+  }
 }
 
 
@@ -121,6 +109,7 @@ void loop(){
   }
 
   if(dataReplace){
+    
     digitalWrite(13, HIGH);
     for(int i=24; i<225; i++){
       if(i < 224){
@@ -137,9 +126,8 @@ void loop(){
     // for(int i=0; i<256; i++){
     //   Serial.write(pixelBin[i]);
     // }
-    // lcd.setCursor(0, 1);
-    // lcd.print(columnNum);
-    // lcd.print(" data received");
+    
+    
     dataReplace = false;
     columnNum++;
     digitalWrite(13, LOW);
@@ -167,20 +155,15 @@ void loop(){
   // }
 
 
-  //  //フェーズ検知用エンコーダが反応した時
-  //  if(phaseState != lastPhaseState){
-  //    if(phaseState == HIGH){
-  //      phase = phase + 1;
-  //      
-  //      out();
-  //    }
-  //  }
-
-
   //rotation data correction
   // 左側エンドスイッチが反応した時
   if(carriageMode == carriageK){
     if(zero != lastZero){
+      
+       //if(digitalRead(enc3)==false){
+       //dataReverse();
+       //}
+      
       if(zero == LOW){      
         // pos = 0;
         if(carDirection == 2){
@@ -268,18 +251,21 @@ void rotaryEncoder(){
 //右へ動くときのニードル出力
 void out1(){
   digitalWrite(LED, pixelBin[pos]);
-  // lcd.clear();
-  // lcd.write(pos);
-  //needle1 = 31;
-  //以降は順に46まで
+
   if(carriageMode == carriageL){
     if(pos > 15){
-      digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
+      if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos+1]);}
+      if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos+1]);}
+      
+      //digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos > 15){
-      digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
+      if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos-16]);}
+      if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos-16]);}
+      
+      //digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
     }
   }
 }
@@ -293,16 +279,19 @@ void out2(){
   // int n = pixelBin[pos-11];
   if(carriageMode == carriageL){
     if(pos < 256-8){
-      digitalWrite((pos)%16+31,pixelBin[pos+1]);    
+      if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+1]);}
+      if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+1]);}
+ 
+      //digitalWrite((pos)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos < 256-8){
-      digitalWrite((pos)%16+31,pixelBin[pos+8]);    
+      if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+8]);}
+      if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+8]);}
+      
+      
+      //digitalWrite((pos)%16+31,pixelBin[pos+8]);    
     }
   }
 }
-
-
-
-
