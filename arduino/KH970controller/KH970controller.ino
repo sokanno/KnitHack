@@ -6,7 +6,6 @@ Brother KH970 Controller
 
 
 char receivedBin[201];
-int RePixelBin[256];
 
 int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -119,15 +118,7 @@ void loop(){
         carriageMode = receivedBin[i-24];
       }
     }
-    // for(int i=91; i<155; i++){
-    //   pixelBin[i] = receivedBin[i-91];
-    // }
     header++;
-    // for(int i=0; i<256; i++){
-    //   Serial.write(pixelBin[i]);
-    // }
-    
-    
     dataReplace = false;
     columnNum++;
     digitalWrite(13, LOW);
@@ -138,56 +129,26 @@ void loop(){
   right = digitalRead(REnd);
   barSwitch = digitalRead(bar);
 
-  // if(encState1 == HIGH){
-  //   digitalWrite(led3, HIGH);
-  // }
-  // else{
-  //   digitalWrite(led3,LOW);
-  // }
-
-
-  //回転検知用エンコーダが反応したとき
-  // if(encState1 != lastState){
-  //   if(encState1 == HIGH){
-  //     carDir();
-  //     // Serial.println(carDirection);
-  //   }
-  // }
-
 
   //rotation data correction
-  // 左側エンドスイッチが反応した時
   if(carriageMode == carriageK){
-    if(zero != lastZero){
-      
-       //if(digitalRead(enc3)==false){
-       //dataReverse();
-       //}
-      
-      if(zero == LOW){      
-        // pos = 0;
-        if(carDirection == 2){
-          pos = 27;
-          // Serial.println("Lend");
-          // Serial.write(header);
-        }
-      } 
-    }
-
-
     // 右側エンドスイッチが反応した時
     if(right != lastRight){
       if(right == LOW){
-        // pos = 200;
         if(carDirection == 1){
           pos = 228;
-          // Serial.println("Rend");
-          // Serial.write(header);
         }
       } 
     }
   }
-
+  // 左側エンドスイッチが反応した時
+  if(zero != lastZero){      
+    if(zero == LOW){      
+      if(carDirection == 2){
+        pos = 27;
+      }
+    } 
+  }
 
   //段数計スイッチが反応した時
   if(barSwitch != lastBarSwitch){
@@ -200,9 +161,7 @@ void loop(){
   lastBarSwitch = barSwitch;
   lastZero = zero;
   lastRight = right;
-  // lastState = encState1;
   lastCheckSwState = checkSwState;
-  //lastPhaseState = phaseState;
 }
 
 // キャリッジの移動時に移動方向の認識と現在位置の更新
@@ -211,39 +170,26 @@ void rotaryEncoder(){
   if(!encState2){
     carDirection = 1;
     pos++;
-    //    Serial.println(pos);
     if(pos != 256){
       sendFlag = true;
       out1();
     }
     else if(pos == 256 && sendFlag){
-      // Serial.println(256);
       Serial.write(header);
-      // header++;
       sendFlag = false;
-      //      if(header == 63){
-      //        header = 0;
-      //      }
     }
   } 
   else if(encState2){
     carDirection = 2;
     pos--;
-    //    Serial.println(pos);
     if(pos != 1){
-      //      if(pos == 1) pos = 0;
       sendFlag = true;
       out2();
     }
     else if(pos == 1 && sendFlag){
-      // Serial.println(0);
       Serial.write(header);
-      // header++;
       sendFlag = false;
       pos = 0;
-      //      if(header == 63){
-      //        header = 0;
-      //      }
     }
   } 
 }
@@ -256,7 +202,6 @@ void out1(){
     if(pos > 15){
       if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos+1]);}
       if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos+1]);}
-      
       //digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
     }
   }
@@ -264,7 +209,6 @@ void out1(){
     if(pos > 15){
       if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos-16]);}
       if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos-16]);}
-      
       //digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
     }
   }
@@ -274,14 +218,10 @@ void out1(){
 //68~84でミスる。なんで
 void out2(){
   digitalWrite(LED, pixelBin[pos]);
-  // lcd.clear();
-  // lcd.write(pos);
-  // int n = pixelBin[pos-11];
   if(carriageMode == carriageL){
     if(pos < 256-8){
       if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+1]);}
       if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+1]);}
- 
       //digitalWrite((pos)%16+31,pixelBin[pos+1]);    
     }
   }
@@ -289,8 +229,6 @@ void out2(){
     if(pos < 256-8){
       if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+8]);}
       if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+8]);}
-      
-      
       //digitalWrite((pos)%16+31,pixelBin[pos+8]);    
     }
   }
