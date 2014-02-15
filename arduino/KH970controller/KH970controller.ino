@@ -129,7 +129,6 @@ void loop(){
   right = digitalRead(REnd);
   barSwitch = digitalRead(bar);
 
-
   //rotation data correction
   if(carriageMode == carriageK){
     // 右側エンドスイッチが反応した時
@@ -140,14 +139,24 @@ void loop(){
         }
       } 
     }
+    // 左側エンドスイッチが反応した時
+    if(zero != lastZero){      
+      if(zero == LOW){      
+        if(carDirection == 2){
+          pos = 27;
+        }
+      } 
+    }
   }
-  // 左側エンドスイッチが反応した時
-  if(zero != lastZero){      
-    if(zero == LOW){      
-      if(carDirection == 2){
-        pos = 27;
-      }
-    } 
+  else if(carriageMode == carriageL){
+    // 左側エンドスイッチが反応した時
+    if(zero != lastZero){      
+      if(zero == LOW){      
+        if(carDirection == 2){
+          pos = 23;
+        }
+      } 
+    }
   }
 
   //段数計スイッチが反応した時
@@ -201,15 +210,15 @@ void out1(){
   if(carriageMode == carriageL){
     if(pos > 15){
       if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos+1]);}
-      if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos+1]);}
-      //digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
+      else if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos+1]);}
+      // digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos > 15){
       if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos-16]);}
-      if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos-16]);}
-      //digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
+      else if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos-16]);}
+      // digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
     }
   }
 }
@@ -221,15 +230,15 @@ void out2(){
   if(carriageMode == carriageL){
     if(pos < 256-8){
       if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+1]);}
-      if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+1]);}
-      //digitalWrite((pos)%16+31,pixelBin[pos+1]);    
+      else if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+1]);}
+      // digitalWrite((pos)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos < 256-8){
       if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+8]);}
-      if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+8]);}
-      //digitalWrite((pos)%16+31,pixelBin[pos+8]);    
+      else if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+8]);}
+      // digitalWrite((pos)%16+31,pixelBin[pos+8]);    
     }
   }
 }
