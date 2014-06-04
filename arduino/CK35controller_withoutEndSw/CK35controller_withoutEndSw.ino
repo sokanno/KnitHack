@@ -124,24 +124,22 @@ void loop(){
   //rotation data correction
    // if left end switch pushed
 //  if(carriageMode == carriageK){
-    if(zero != lastZero){
-      if(zero == true){      
-        if(carDirection == 2){
+//    if(zero != lastZero){
+//      if(zero == true){      
+//        if(carDirection == 2){
 //          pos = 27;
-            pos = 30;
-        }
-      } 
-    }
-
-    // if right end switch pushed
-    if(right != lastRight){
-      if(right == true){    
-        if(carDirection == 1){
+//        }
+//      } 
+//    }
+//
+//    // if right end switch pushed
+//    if(right != lastRight){
+//      if(right == true){    
+//        if(carDirection == 1){
 //          pos = 228;// lower than 225 doesnt works.
-            pos = 225;
-        }
-      } 
-    }
+//        }
+//      } 
+//    }
 //  }
 
   lastZero = zero;
@@ -172,6 +170,7 @@ void rotaryEncoder(){
     else if(pos == 1 && sendFlag){
       Serial.write(header);
       sendFlag = false;
+//      pos = 0;
     }
   } 
   if(pos < 0) pos = 0;

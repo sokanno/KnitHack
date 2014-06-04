@@ -40,7 +40,7 @@ public void Reset(int theValue) {
 }
 
 public void Connect() {
-  String portName = Serial.list()[0];
+  String portName = Serial.list()[11];
   println(Serial.list());
   port = new Serial(this, portName, 57600);
   port.clear();
