@@ -3,7 +3,6 @@ const int enc2 = 3;
 const int LEnd = 1;   //endLineLeft for analog in
 const int REnd = 0;   //endLineRight for analog in
 
-boolean enc1State;
 boolean enc2State;
 
 int zero = 0;       //left end switch value
@@ -15,7 +14,6 @@ int pos = 0;
 int carDirection = 0;  //direction of carriage　0:unknown　1:right　2:left
 
 void setup() {
-  // attachInterrupt(enc1, rotaryEncode, CHANGE);
   attachInterrupt(enc1, rotaryEncodeHIGH, RISING);
   Serial.begin(57600);
 }
@@ -26,36 +24,12 @@ void loop() {
   zero = (analogRead(LEnd) > 460) ? 1 : 0;
   right = (analogRead(REnd) > 460) ? 1 : 0;
   
-  
   if(zero && !lastZero && carDirection == 2){
     Serial.println(pos);
   }
   if(right && !lastRight && carDirection == 1){
     Serial.println(pos);
   }    
-//
-//  if(zero != lastZero){
-//    if(zero == true){      
-//      // pos = 0;
-//      //        Serial.println("Lend");
-//      if(carDirection == 2){
-//        pos = 27;
-//        // Serial.write(header);
-//      }
-//    } 
-//  }
-//
-//  // if right end switch pushed
-//  if(right != lastRight){
-//    if(right == true){
-//      // pos = 200;
-//      //        Serial.println("Rend");        
-//      if(carDirection == 1){
-//        pos = 228;
-//        // Serial.write(header);
-//      }
-//    } 
-//  }
 
   lastZero = zero;
   lastRight = right;
@@ -72,26 +46,6 @@ void rotaryEncodeHIGH(){
   }
 }
 
-//void rotaryEncode(){
-//  enc1State = digitalRead(enc1);
-//  enc2State = digitalRead(enc2);
-//  if(enc1State){
-//    if(enc2State){
-//      pos++;
-//    }
-//    else if(enc2State){
-//      pos--;
-//    }
-//  }
-//  else	if(!enc1State){
-//    if(enc2State){
-//      pos++;
-//    }
-//    else if(!enc2State){
-//      pos--;
-//    }
-//  }
-//}
 
 
 
