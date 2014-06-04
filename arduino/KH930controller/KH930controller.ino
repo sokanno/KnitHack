@@ -4,6 +4,9 @@ Brother KH970 Controller
  So Kanno
  */
 
+
+// #include <LiquidCrystal.h>
+
 char receivedBin[201];
 int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -23,7 +26,6 @@ int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-
 int dataSize = 202;
 boolean dataReplace = false;
 int header = 0;
@@ -47,14 +49,14 @@ const int REnd = 0;   //endLineRight for analog in
 const int LED = 13;
 
 //this is for kh930
-//int solenoidsTemp[16] = 
-//{
-//  22,24,26,28,30,32,34,36,37,35,33,31,29,27,25,23};
-
-//for CK35
 int solenoidsTemp[16] = 
 {
-  22,24,26,28,30,32,34,36,33,31,29,27,25,23,35,37};
+  22,24,26,28,30,32,34,36,37,35,33,31,29,27,25,23};
+
+//for CK35
+//int solenoidsTemp[16] = 
+//{
+//  22,24,26,28,30,32,34,36,33,31,29,27,25,23,35,37};
 
 int pos = 0;  //position of carriage
 int lastPos = 0;
@@ -132,23 +134,20 @@ void loop(){
   }
 
 
-//  if(analogRead(LEnd) > 400) zero = true;
-//  else zero = false;
-//  if(analogRead(REnd) > 400) right = true;
-//  else right = false;  
-  zero = (analogRead(LEnd) > 460) ? 1 : 0;
-  right = (analogRead(REnd) > 460) ? 1 : 0;
+  if(analogRead(LEnd) > 400) zero = true;
+  else zero = false;
+  if(analogRead(REnd) > 400) right = true;
+  else right = false;  
 
   //rotation data correction
    // if left end switch pushed
-//  if(carriageMode == carriageK){
+  if(carriageMode == carriageK){
     if(zero != lastZero){
       if(zero == true){      
         // pos = 0;
         //        Serial.println("Lend");
         if(carDirection == 2){
           pos = 27;
-//          pos = 28; // 30 works fine , 29 also works fine, but 30 is symmetry
           // Serial.write(header);
         }
       } 
@@ -161,13 +160,19 @@ void loop(){
         // pos = 200;
         //        Serial.println("Rend");        
         if(carDirection == 1){
-          pos = 228;// lower than 225 doesnt works.
+          pos = 228;
           // Serial.write(header);
         }
       } 
     }
-//  }
+  }
 
+
+  if(barSwitch != lastBarSwitch){
+    if(barSwitch == HIGH){
+      barCounter = barCounter + 1;
+    }
+  }
 
   lastBarSwitch = barSwitch;
   lastZero = zero;
@@ -204,7 +209,6 @@ void rotaryEncoder(){
       pos = 0;
     }
   } 
-  if(pos < 0) pos = 0;
 }
 
 //solenoid output when carriage going to right
