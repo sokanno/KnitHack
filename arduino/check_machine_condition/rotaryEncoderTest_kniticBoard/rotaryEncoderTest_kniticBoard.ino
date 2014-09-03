@@ -21,8 +21,8 @@ void setup() {
 void loop() {
 //  Serial.println(pos);
 
-  zero = (analogRead(LEnd) > 460) ? 1 : 0;
-  right = (analogRead(REnd) > 460) ? 1 : 0;
+  zero = (analogRead(LEnd) > 500) ? 1 : 0;
+  right = (analogRead(REnd) > 500) ? 1 : 0;
   
   if(zero && !lastZero && carDirection == 2){
     Serial.println(pos);

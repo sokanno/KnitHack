@@ -1,5 +1,5 @@
 /*
-Image Converter for hacked Brother KH970.
+Image Converter for hacked Brother CK35.
  2013 August
  So Kanno
  */
