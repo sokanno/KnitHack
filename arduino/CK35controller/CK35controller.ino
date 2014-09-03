@@ -1,5 +1,6 @@
 /*
-Brother KH970 Controller
+Brother CK-35 Controller
+ compatible with Knitic board http://www.knitic.com/
  2014 January
  So Kanno
  */
@@ -23,6 +24,25 @@ int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
+
+//int pixelBin[256] = {
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+//};
 
 int dataSize = 202;
 boolean dataReplace = false;
@@ -82,7 +102,7 @@ void setup(){
   }
   attachInterrupt(enc1, rotaryEncoder, RISING);
   Serial.begin(57600);
-  
+
   if(digitalRead(enc3)==false){  //phase ditection
     phase = 1;
   }  
@@ -90,15 +110,19 @@ void setup(){
 
 
 void loop(){
-
-  //  Serial.println(pos);
-
   if(Serial.available() > 62){
-    if(Serial.readBytesUntil(footer, receivedBin, dataSize)){
-      dataReplace = true;     
-      // for(int i=0; i<200; i++){
-      //   Serial.write(receivedBin[i]);
-      // }
+    if(Serial.readBytesUntil(footer, receivedBin, dataSize+1)){
+      int checksum_calculated=0;
+      for(int i=0; i<200;i++){
+        checksum_calculated=checksum_calculated+receivedBin[i];
+      }
+      if(checksum_calculated%256==receivedBin[201]){     
+        dataReplace = true;     
+      }
+      else{
+        dataReplace = false;
+        Serial.write(header);
+      }
     }
   }
 
@@ -118,31 +142,31 @@ void loop(){
     digitalWrite(13, LOW);
   }
 
-  zero = (analogRead(LEnd) > 460) ? 1 : 0;
-  right = (analogRead(REnd) > 460) ? 1 : 0;
+  zero = (analogRead(LEnd) > 500) ? 1 : 0;
+  right = (analogRead(REnd) > 500) ? 1 : 0;
 
   //rotation data correction
-   // if left end switch pushed
-//  if(carriageMode == carriageK){
-    if(zero != lastZero){
-      if(zero == true){      
-        if(carDirection == 2){
-//          pos = 27;
-            pos = 30;
-        }
-      } 
-    }
+  // if left end switch pushed
+  //  if(carriageMode == carriageK){
+  if(zero != lastZero){
+    if(zero == true){      
+      if(carDirection == 2){
+        //          pos = 27;
+        pos = 30;
+      }
+    } 
+  }
 
-    // if right end switch pushed
-    if(right != lastRight){
-      if(right == true){    
-        if(carDirection == 1){
-//          pos = 228;// lower than 225 doesnt works.
-            pos = 225;
-        }
-      } 
-    }
-//  }
+  // if right end switch pushed
+  if(right != lastRight){
+    if(right == true){    
+      if(carDirection == 1){
+        //          pos = 228;// lower than 225 doesnt works.
+        pos = 225;
+      }
+    } 
+  }
+  //  }
 
   lastZero = zero;
   lastRight = right;
@@ -231,4 +255,6 @@ void out2(){
     }
   }
 }
+
+
 
