@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBdtC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sojamo/drop : : DropEvent : : listFiles ( )</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="stylesheet.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+document.getElementsByTagName('html')[0].className = 'isjs';
+
+function toggle(dt) 
+{ 
+  var display, dd=dt; 
+  /* get dd */ 
+  do{ dd = dd.nextSibling } while(dd.tagName!='DD'); 
+  toOpen =!dd.style.display; 
+  dd.style.display = toOpen? 'block':'' 
+  dt.getElementsByTagName('span')[0].innerHTML 
+    = toOpen? '-':'+' ; 
+} 
+</script>
+</head>
+<body>
+<div id="container">
+	<div id="header">
+	<a href="./index.htm"><img src="./docuImages/title.jpg" /></a>
+	</div>
+	<div class="content">
+	<h1><a href="index.htm">sojamo/drop</a> / <a href="DropEvent_class_DropEvent.htm">DropEvent</a> / listFiles( )</h1>
+		<div class="separator">
+		<dl><dt class="key">name</dt><dd class="value">listFiles ( )</dd></dl>
+		</div>
+		<dl><dt class="key">description</dt><dd class="value">list files in a folder, recursive is optional, use true or false.
+ to list with a limited depth use an int between 0 and n.
+
+ taken from http://snippets.dzone.com/posts/show/1875&nbsp;</dd></dl>
+		
+		<div class="toggleList example">
+			<dl><dt onclick="toggle(this)"><span>+</span>Examples</dt>
+			<dd><pre>/**
+ * DropFilesAndFolders demonstrates how to access the information of 
+ * a file or folder that has been dragged into the sketch.
+ * code by andreas schlegel. http://www.sojamo.de/libraries/drop
+*/
+import sojamo.drop.*;
+
+SDrop drop;
+
+void setup() {
+  size(400,400);
+  drop = new SDrop(this);
+}
+
+void draw() {
+background(0);
+}
+
+
+void dropEvent(DropEvent theDropEvent) {
+  if(theDropEvent.isFile()) {
+    // for further information see
+    // http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html
+    File myFile = theDropEvent.file();
+    println("\nisDirectory ? "+myFile.isDirectory()+"  /  isFile ? "+myFile.isFile());
+    if(myFile.isDirectory()) {
+      println("listing the directory");
+      
+      // list the directory, not recursive, with the File api. returns File[].
+      println("\n\n### listFiles #############################\n");
+      println(myFile.listFiles());
+
+      
+      // list the directory recursively with listFilesAsArray. returns File[]
+      println("\n\n### listFilesAsArray recursive #############################\n");
+      println(theDropEvent.listFilesAsArray(myFile,true));
+      
+      
+      // list the directory and control the depth of the search. returns File[]
+      println("\n\n### listFilesAsArray depth #############################\n");
+      println(theDropEvent.listFilesAsArray(myFile,2));
+    }
+  }
+}
+
+</pre></dd>
+			</dl>
+		</div>
+		
+		<div class="separator">
+		<dl><dt class="key">Syntax</dt><dd class="value"><pre>listFiles(directory, filter, recurse);
+listFiles(directory, recurse);
+listFiles(directory, filter, theDepthLimit);
+listFiles(directory, theDepthLimit);
+</pre></dd></dl>
+		</div>
+		<div class="separator">
+		
+   <dl><dt class="key">parameters</dt><dd class="value"><span class="parameters">directory</span><span class="parameters">File</span><span class="clear">&nbsp;</span></dd>
+<dd class="value"><span class="parameters">filter</span><span class="parameters">FilenameFilter</span><span class="clear">&nbsp;</span></dd>
+<dd class="value"><span class="parameters">recurse</span><span class="parameters">boolean</span><span class="clear">&nbsp;</span></dd>
+</dl>
+		<br /><br />
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Returns</dt><dd class="value">Collection</dd></dl>
+
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Usage</dt><dd class="value">Web & Application</dd></dl>
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Related</dt><dd class="value"><ul></ul></dd></dl>
+		</div>
+	</div>
+	<div id="footer">
+<p>by andreas schlegel (<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">cc</a>) 2007, <a href="http://www.sojamo.de" target="_blank">sojamo</a>.</p>
+</div>
+
+</div>
+</body>
+</html>

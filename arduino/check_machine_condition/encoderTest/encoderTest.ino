@@ -10,7 +10,9 @@ boolean enc2State;
 int pos = 0;
 
 void setup() {
-  // attachInterrupt(enc1, rotaryEncode, CHANGE);
+  pinMode(enc1, INPUT);
+  pinMode(enc2, INPUT);
+//  attachInterrupt(enc1, rotaryEncode, CHANGE);
   attachInterrupt(enc1, rotaryEncode, RISING);
   Serial.begin(57600);
 }
@@ -24,5 +26,6 @@ void rotaryEncode(){
   if(!enc2State)	pos++;
   else if(enc2State) pos--;
 }
+
 
 

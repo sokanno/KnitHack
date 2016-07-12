@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sojamo/drop : : DropEvent</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="stylesheet.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+document.getElementsByTagName('html')[0].className = 'isjs';
+
+function toggle(dt) 
+{ 
+  var display, dd=dt; 
+  /* get dd */ 
+  do{ dd = dd.nextSibling } while(dd.tagName!='DD'); 
+  toOpen =!dd.style.display; 
+  dd.style.display = toOpen? 'block':'' 
+  dt.getElementsByTagName('span')[0].innerHTML 
+    = toOpen? '-':'+' ; 
+} 
+</script>
+</head>
+<body>
+<div id="container">
+		<div id="header">
+		<a href="./index.htm"><img src="./docuImages/title.jpg" /></a>
+		</div>
+	<div class="content">
+		<h1>DropEvent</h1>
+		<dl><dt class="key">description</dt><dd class="value">a drop event will be returned to processing whenever you drop
+ a file or a folder onto your running sketch or application.</dd></dl>
+			
+			<div class="toggleList example">
+				<dl><dt onclick="toggle(this)"><span>+</span>Example</dt>
+					<dd><pre>/**
+ * basic example of a drop event and its contained informations.
+ * drag an image, a file, a folder, a link into the sketch and see
+ * what information the console spits out.
+ * code by andreas schlegel. http://www.sojamo.de/libraries/drop
+*/
+import sojamo.drop.*;
+
+SDrop drop;
+
+void setup() {
+  size(400,400);
+    frameRate(30);
+  drop = new SDrop(this);
+}
+
+
+void draw() {
+  background(0);
+}
+
+void dropEvent(DropEvent theDropEvent) {
+  // returns a string e.g. if you drag text from a texteditor
+  // into the sketch this can be handy.
+  println("toString()\t"+theDropEvent.toString());
+  
+  // returns true if the dropped object is an image from
+  // the harddisk or the browser.
+  println("isImage()\t"+theDropEvent.isImage());
+  
+  // returns true if the dropped object is a file or folder.
+  println("isFile()\t"+theDropEvent.isFile());
+  
+  // if the dropped object is a file or a folder you 
+  // can access it with file() . for more information see
+  // http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html
+  println("file()\t"+theDropEvent.file());
+
+  // returns true if the dropped object is a bookmark, a link, or a url.  
+  println("isURL()\t"+theDropEvent.isURL());
+  
+  // returns the url as string.
+  println("url()\t"+theDropEvent.url());
+  
+  // returns the DropTargetDropEvent, for further information see
+  // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html
+  println("dropTargetDropEvent()\t"+theDropEvent.dropTargetDropEvent());
+}
+</pre></dd>
+				</dl>
+			</div>
+			
+			
+			<!-- noConstructor:START
+			<dl><dt class="key">constructors</dt><dd class="value"><pre></pre></dd></dl>
+			noConstructor:END -->
+			
+			<!--
+			
+			-->
+			
+			
+			<!-- METHODS:BEGIN -->
+			
+       <dl class="noborder"><dt>Methods</dt></dl>
+       <dl><dt class="key"><a href="dropevent_method_component.htm">component ( )</a></dt><dd class="value">get the component of the drop event.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_droptargetdropevent.htm">dropTargetDropEvent ( )</a></dt><dd class="value">get the DropTargetDropEvent of the drop event. take a look at the documentation at
+ <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html" target="_blank">api/java/awt/dnd/DropTargetDropEvent</a></dd></dl>
+<dl><dt class="key"><a href="dropevent_method_file.htm">file ( )</a></dt><dd class="value">when dropping a file or a folder onto the applet you get a java File back.
+ for accessing the content of this file please see the java documentation at
+ <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html" target="_blank">api/java/io/File</a> before making a
+ call to the file() method, make sure the File is not null. you can check
+ this with the theDropEvent.isFile() method, which will return true or false.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_filepath.htm">filePath ( )</a></dt><dd class="value">filePath returns the absolute path of a file.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_isfile.htm">isFile ( )</a></dt><dd class="value">check if the drop event was of type java.io.File.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_isimage.htm">isImage ( )</a></dt><dd class="value">check if drop event is an image of type java.awt.Image</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_isurl.htm">isURL ( )</a></dt><dd class="value">check if drop event is an url, e.g. and url drag/dropped from a browser.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_listfiles.htm">listFiles ( )</a></dt><dd class="value">list files in a folder, recursive is optional, use true or false.
+ to list with a limited depth use an int between 0 and n.
+
+ taken from http://snippets.dzone.com/posts/show/1875</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_listfilesasarray.htm">listFilesAsArray ( )</a></dt><dd class="value">list files in a folder, recursive is optional, use true or false.
+ to list with a limited depth use an int between 0 and n.
+
+ taken from http://snippets.dzone.com/posts/show/1875</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_loadimage.htm">loadImage ( )</a></dt><dd class="value">load an image from an URL or from a harddisk. before calling loadImage(), check
+ with isImage() if there is an image available.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_text.htm">text ( )</a></dt><dd class="value">when dropping text onto the applet you can access the text with the
+ getText() method.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_url.htm">url ( )</a></dt><dd class="value">if an URL was dropped onto the applet the url() method returns the same as
+ String.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_x.htm">x ( )</a></dt><dd class="value">get the x coordinate where the object was dropped.</dd></dl>
+<dl><dt class="key"><a href="dropevent_method_y.htm">y ( )</a></dt><dd class="value">get the y coordinate where the object was dropped.</dd></dl>
+
+   
+			<!-- METHODS:END -->
+			<div class="separator">
+			<dl><dt class="key">usage</dt><dd class="value">Web & Application</dd></dl>
+			</div>
+			<div class="separator">
+			<dl><dt class="key">related</dt><dd class="value"><ul></ul></dd></dl>
+			</div>
+	</div>
+	<div id="footer">
+	<p>by andreas schlegel (<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">cc</a>) 2007, <a href="http://www.sojamo.de" target="_blank">sojamo</a>.</p>
+	</div>
+</div>
+</body>
+</html>
+
+

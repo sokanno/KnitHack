@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sojamo/drop : : SDrop</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="stylesheet.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+document.getElementsByTagName('html')[0].className = 'isjs';
+
+function toggle(dt) 
+{ 
+  var display, dd=dt; 
+  /* get dd */ 
+  do{ dd = dd.nextSibling } while(dd.tagName!='DD'); 
+  toOpen =!dd.style.display; 
+  dd.style.display = toOpen? 'block':'' 
+  dt.getElementsByTagName('span')[0].innerHTML 
+    = toOpen? '-':'+' ; 
+} 
+</script>
+</head>
+<body>
+<div id="container">
+		<div id="header">
+		<a href="./index.htm"><img src="./docuImages/title.jpg" /></a>
+		</div>
+	<div class="content">
+		<h1>SDrop</h1>
+		<dl><dt class="key">description</dt><dd class="value">sojamo.drop is a processing library that lets you drag and drop objects such
+ as files, images, bookmarks, or text into your processing application. once
+ dropped you can access the information of the object from a DropEvent that
+ has been forwarded to the processing sketch.</dd></dl>
+			
+			<div class="toggleList example">
+				<dl><dt onclick="toggle(this)"><span>+</span>Example</dt>
+					<dd><pre>/**
+ * basic example of a drop event and its contained informations.
+ * drag an image, a file, a folder, a link into the sketch and see
+ * what information the console spits out.
+ * code by andreas schlegel. http://www.sojamo.de/libraries/drop
+*/
+import sojamo.drop.*;
+
+SDrop drop;
+
+void setup() {
+  size(400,400);
+    frameRate(30);
+  drop = new SDrop(this);
+}
+
+
+void draw() {
+  background(0);
+}
+
+void dropEvent(DropEvent theDropEvent) {
+  // returns a string e.g. if you drag text from a texteditor
+  // into the sketch this can be handy.
+  println("toString()\t"+theDropEvent.toString());
+  
+  // returns true if the dropped object is an image from
+  // the harddisk or the browser.
+  println("isImage()\t"+theDropEvent.isImage());
+  
+  // returns true if the dropped object is a file or folder.
+  println("isFile()\t"+theDropEvent.isFile());
+  
+  // if the dropped object is a file or a folder you 
+  // can access it with file() . for more information see
+  // http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html
+  println("file()\t"+theDropEvent.file());
+
+  // returns true if the dropped object is a bookmark, a link, or a url.  
+  println("isURL()\t"+theDropEvent.isURL());
+  
+  // returns the url as string.
+  println("url()\t"+theDropEvent.url());
+  
+  // returns the DropTargetDropEvent, for further information see
+  // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html
+  println("dropTargetDropEvent()\t"+theDropEvent.dropTargetDropEvent());
+}
+</pre></dd>
+				</dl>
+			</div>
+			
+			
+			
+			<dl><dt class="key">constructors</dt><dd class="value"><pre>SDrop(theComponent);
+SDrop(theComponent, theObject);
+</pre></dd></dl>
+			
+			
+			
+			
+   <dl><dt class="key">parameters</dt><dd class="value"><span class="parameters">theComponent</span><span class="parameters"></span><span class="clear">&nbsp;</span></dd>
+<dd class="value"><span class="parameters">theObject</span><span class="parameters"></span><span class="clear">&nbsp;</span></dd>
+</dl>
+			
+			
+			
+			<!-- METHODS:BEGIN -->
+			
+       <dl class="noborder"><dt>Methods</dt></dl>
+       <dl><dt class="key"><a href="sdrop_method_addcomponent.htm">addComponent ( )</a></dt><dd class="value">if you combine sojamo.drop with e.g. a control window from controlP5 you
+ can add a control window asa component to sojamo.drop. objects dropped
+ into the component, here control window ,will be forwarded to your
+ processing sketch.</dd></dl>
+<dl><dt class="key"><a href="sdrop_method_adddroplistener.htm">addDropListener ( )</a></dt><dd class="value">add a drop listener to your sketch.</dd></dl>
+<dl><dt class="key"><a href="sdrop_method_removedroplistener.htm">removeDropListener ( )</a></dt><dd class="value">remove a drop listener from your sketch.</dd></dl>
+
+   
+			<!-- METHODS:END -->
+			<div class="separator">
+			<dl><dt class="key">usage</dt><dd class="value">Web & Application</dd></dl>
+			</div>
+			<div class="separator">
+			<dl><dt class="key">related</dt><dd class="value"><ul></ul></dd></dl>
+			</div>
+	</div>
+	<div id="footer">
+	<p>by andreas schlegel (<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">cc</a>) 2007, <a href="http://www.sojamo.de" target="_blank">sojamo</a>.</p>
+	</div>
+</div>
+</body>
+</html>
+
+

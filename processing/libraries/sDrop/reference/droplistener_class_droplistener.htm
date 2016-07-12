@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sojamo/drop : : DropListener</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="stylesheet.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+document.getElementsByTagName('html')[0].className = 'isjs';
+
+function toggle(dt) 
+{ 
+  var display, dd=dt; 
+  /* get dd */ 
+  do{ dd = dd.nextSibling } while(dd.tagName!='DD'); 
+  toOpen =!dd.style.display; 
+  dd.style.display = toOpen? 'block':'' 
+  dt.getElementsByTagName('span')[0].innerHTML 
+    = toOpen? '-':'+' ; 
+} 
+</script>
+</head>
+<body>
+<div id="container">
+		<div id="header">
+		<a href="./index.htm"><img src="./docuImages/title.jpg" /></a>
+		</div>
+	<div class="content">
+		<h1>DropListener</h1>
+		<dl><dt class="key">description</dt><dd class="value">Drop Listener is an abstract class and can be extended from
+ a custom class.
+ DropListener needs to implement dropEvent(DropEvent theDropEvent) and
+ can overwrite dropEnter() and dropLeave()</dd></dl>
+			
+			<div class="toggleList example">
+				<dl><dt onclick="toggle(this)"><span>+</span>Example</dt>
+					<dd><pre>/**
+ * DropDropOnTarget demonstrates how to use a DropListener with
+ * a dedicated target area when dragging and dropping an object
+ * into your sketch.
+ * code by andreas schlegel. http://www.sojamo.de/libraries/drop
+*/
+
+import sojamo.drop.*;
+
+SDrop drop;
+
+MyDropListener m;
+
+void setup() {
+  size(400,400);
+  drop = new SDrop(this);
+  m = new MyDropListener();
+  drop.addDropListener(m);
+}
+
+void draw() {
+  background(0);
+  m.draw();
+}
+
+
+void dropEvent(DropEvent theDropEvent) {}
+
+
+// a custom DropListener class.
+class MyDropListener extends DropListener {
+  
+  int myColor;
+  
+  MyDropListener() {
+    myColor = color(255);
+    // set a target rect for drop event.
+    setTargetRect(10,10,100,100);
+  }
+  
+  void draw() {
+    fill(myColor);
+    rect(10,10,100,100);
+  }
+  
+  // if a dragged object enters the target area.
+  // dropEnter is called.
+  void dropEnter() {
+    myColor = color(255,0,0);
+  }
+  
+  // if a dragged object leaves the target area.
+  // dropLeave is called.
+  void dropLeave() {
+    myColor = color(255);
+  }
+  
+  void dropEvent(DropEvent theEvent) {
+    println("Dropped on MyDropListener");
+  }
+}
+
+</pre></dd>
+				</dl>
+			</div>
+			
+			
+			
+			<dl><dt class="key">constructors</dt><dd class="value"><pre>DropListener();
+</pre></dd></dl>
+			
+			
+			
+			
+			
+			
+			
+			<!-- METHODS:BEGIN -->
+			
+       <dl class="noborder"><dt>Methods</dt></dl>
+       <dl><dt class="key"><a href="droplistener_method_settargetrect.htm">setTargetRect ( )</a></dt><dd class="value">set the target rect where things can be dropped into.</dd></dl>
+
+   
+			<!-- METHODS:END -->
+			<div class="separator">
+			<dl><dt class="key">usage</dt><dd class="value">Web & Application</dd></dl>
+			</div>
+			<div class="separator">
+			<dl><dt class="key">related</dt><dd class="value"><ul></ul></dd></dl>
+			</div>
+	</div>
+	<div id="footer">
+	<p>by andreas schlegel (<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">cc</a>) 2007, <a href="http://www.sojamo.de" target="_blank">sojamo</a>.</p>
+	</div>
+</div>
+</body>
+</html>
+
+

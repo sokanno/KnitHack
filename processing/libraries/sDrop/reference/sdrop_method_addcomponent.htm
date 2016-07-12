@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBdtC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sojamo/drop : : SDrop : : addComponent ( )</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="stylesheet.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+document.getElementsByTagName('html')[0].className = 'isjs';
+
+function toggle(dt) 
+{ 
+  var display, dd=dt; 
+  /* get dd */ 
+  do{ dd = dd.nextSibling } while(dd.tagName!='DD'); 
+  toOpen =!dd.style.display; 
+  dd.style.display = toOpen? 'block':'' 
+  dt.getElementsByTagName('span')[0].innerHTML 
+    = toOpen? '-':'+' ; 
+} 
+</script>
+</head>
+<body>
+<div id="container">
+	<div id="header">
+	<a href="./index.htm"><img src="./docuImages/title.jpg" /></a>
+	</div>
+	<div class="content">
+	<h1><a href="index.htm">sojamo/drop</a> / <a href="SDrop_class_SDrop.htm">SDrop</a> / addComponent( )</h1>
+		<div class="separator">
+		<dl><dt class="key">name</dt><dd class="value">addComponent ( )</dd></dl>
+		</div>
+		<dl><dt class="key">description</dt><dd class="value">if you combine sojamo.drop with e.g. a control window from controlP5 you
+ can add a control window asa component to sojamo.drop. objects dropped
+ into the component, here control window ,will be forwarded to your
+ processing sketch.&nbsp;</dd></dl>
+		<!-- noExamples:START 
+		<div class="toggleList example">
+			<dl><dt onclick="toggle(this)"><span>+</span>Examples</dt>
+			<dd><pre>None available</pre></dd>
+			</dl>
+		</div>
+		 noExamples:END -->
+		<div class="separator">
+		<dl><dt class="key">Syntax</dt><dd class="value"><pre>addComponent(theComponent);
+</pre></dd></dl>
+		</div>
+		<div class="separator">
+		
+   <dl><dt class="key">parameters</dt><dd class="value"><span class="parameters">theComponent</span><span class="parameters">Component</span><span class="clear">&nbsp;</span></dd>
+</dl>
+		<br /><br />
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Returns</dt><dd class="value">None</dd></dl>
+
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Usage</dt><dd class="value">Web & Application</dd></dl>
+		</div>
+		<div class="separator">
+		<dl><dt class="key">Related</dt><dd class="value"><ul></ul></dd></dl>
+		</div>
+	</div>
+	<div id="footer">
+<p>by andreas schlegel (<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">cc</a>) 2007, <a href="http://www.sojamo.de" target="_blank">sojamo</a>.</p>
+</div>
+
+</div>
+</body>
+</html>
