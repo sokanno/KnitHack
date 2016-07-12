@@ -238,51 +238,51 @@ public void draw() {
         }
       }
         // add a meshing function for L carriage mode
-      if(carriageMode == carriageL){
-        if(!meshSwitch){
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
-              else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
-            }
-          }
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(meshPhase){
-                if(j%2 == 0 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 1 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }else if(!meshPhase){
-                if(j%2 == 1 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 0 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }
-            }
-          }
-        }else if(meshSwitch){
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(meshPhase){
-                if(j%2 == 0 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 1 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }else if(!meshPhase){
-                if(j%2 == 1 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 0 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }
-            }
-          }
-        }
-      }
+      // if(carriageMode == carriageL){
+      //   if(!meshSwitch){
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
+      //         else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
+      //       }
+      //     }
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(meshPhase){
+      //           if(j%2 == 0 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 1 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }else if(!meshPhase){
+      //           if(j%2 == 1 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 0 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }else if(meshSwitch){
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(meshPhase){
+      //           if(j%2 == 0 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 1 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }else if(!meshPhase){
+      //           if(j%2 == 1 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 0 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
       //converting "pixelBin[][]" to "displayBin[][]" for displaying
       for (int i=0; i<maxRow; i++) {
@@ -412,20 +412,20 @@ public void change_mode(){
   if(carriageMode == carriageK){
     carriageMode = carriageL;
     ControlFont cfont = new ControlFont(pfont, 16);   
-    cp5.addButton("Mesh_rev")
-      .setPosition(850, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_rev")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
-    cp5.addButton("Mesh_Phase")
-      .setPosition(990, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_Phase")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
+    // cp5.addButton("Mesh_rev")
+    //   .setPosition(850, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_rev")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
+    // cp5.addButton("Mesh_Phase")
+    //   .setPosition(990, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_Phase")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
   }
   else if(carriageMode == carriageL){
     carriageMode = carriageK;
@@ -626,7 +626,7 @@ public void fileOutput(File selection) {
   }
 }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "ImageConverter" };
+    String[] appletArgs = new String[] { "--full-screen", "--bgcolor=#666666", "--stop-color=#cccccc", "ImageConverter" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

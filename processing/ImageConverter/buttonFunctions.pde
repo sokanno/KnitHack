@@ -1,33 +1,33 @@
-public void change_mode(){
-  if(carriageMode == carriageK){
+public void change_mode() {
+  if (carriageMode == carriageK) {
     carriageMode = carriageL;
     ControlFont cfont = new ControlFont(pfont, 16);   
-    cp5.addButton("Mesh_rev")
-      .setPosition(850, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_rev")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
-    cp5.addButton("Mesh_Phase")
-      .setPosition(990, 541)
-        .setSize(120, 30);
-    cp5.getController("Mesh_Phase")
-      .getCaptionLabel()
-        .setFont(cfont)
-          .setSize(16);
+    // cp5.addButton("Mesh_rev")
+    //   .setPosition(850, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_rev")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
+    // cp5.addButton("Mesh_Phase")
+    //   .setPosition(990, 541)
+    //     .setSize(120, 30);
+    // cp5.getController("Mesh_Phase")
+    //   .getCaptionLabel()
+    //     .setFont(cfont)
+    //       .setSize(16);
   }
-  else if(carriageMode == carriageL){
+  else if (carriageMode == carriageL) {
     carriageMode = carriageK;
     cp5.remove("Mesh_rev");
   }
 }
 
-public void Mesh_rev(){
+public void Mesh_rev() {
   meshSwitch = !meshSwitch;
 }
 
-public void Mesh_Phase(){
+public void Mesh_Phase() {
   meshPhase = !meshPhase;
 }
 
@@ -40,8 +40,8 @@ public void Reset(int theValue) {
 }
 
 public void Connect() {
-  String portName = Serial.list()[0];
   println(Serial.list());
+  String portName = Serial.list()[7];
   port = new Serial(this, portName, 57600);
   port.clear();
   done.trigger();
@@ -56,11 +56,6 @@ public void Connect() {
       .setFont(cfont)
         .setSize(16);
 }
-
-// void serialEvent(Serial p) {
-//   int a = p.read();
-//   println(a);
-// }
 
 public void Send_to_KnittingMachine(int theValue) {
   //sending pixelBin[][] to knitting Machine! 
@@ -82,17 +77,24 @@ public void Send_to_KnittingMachine(int theValue) {
 }
 
 void serialEvent(Serial p) {
+  int checksum=0;
+
   header = p.read();
   print(header);
   println("received");
   header = int(header);
   print("next is ");
-  println(header);
+  print(header);
+  print(": ");
   if (header < row) {
     for (int i=0; i<maxColumn; i++) {
       port.write(displayBin[header][i]);
+      print(displayBin[header][i]);
+      checksum=checksum+displayBin[header][i];
     }
+    println();
     port.write(carriageMode);
+    port.write(checksum % 256);
     port.write(footer);
     print(header);
     println("sent");
@@ -113,9 +115,6 @@ void serialEvent(Serial p) {
     error.trigger();
   }
 }
-
-
-
 
 
 

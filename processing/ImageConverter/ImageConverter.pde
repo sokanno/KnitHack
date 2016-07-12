@@ -217,51 +217,51 @@ void draw() {
         }
       }
         // add a meshing function for L carriage mode
-      if(carriageMode == carriageL){
-        if(!meshSwitch){
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
-              else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
-            }
-          }
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(meshPhase){
-                if(j%2 == 0 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 1 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }else if(!meshPhase){
-                if(j%2 == 1 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 0 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }
-            }
-          }
-        }else if(meshSwitch){
-          for (int i=0; i<row; i++) {
-            for (int j=0; j<column; j++) {
-              if(meshPhase){
-                if(j%2 == 0 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 1 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }else if(!meshPhase){
-                if(j%2 == 1 && i%2 ==0){
-                    pixelBin[i][j] = 1;
-                }else if(j%2 == 0 && i%2 ==1){
-                    pixelBin[i][j] = 1;
-                }
-              }
-            }
-          }
-        }
-      }
+      // if(carriageMode == carriageL){
+      //   if(!meshSwitch){
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(pixelBin[i][j] == 0) pixelBin[i][j] = 1;
+      //         else if(pixelBin[i][j] == 1) pixelBin[i][j] = 0;
+      //       }
+      //     }
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(meshPhase){
+      //           if(j%2 == 0 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 1 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }else if(!meshPhase){
+      //           if(j%2 == 1 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 0 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }else if(meshSwitch){
+      //     for (int i=0; i<row; i++) {
+      //       for (int j=0; j<column; j++) {
+      //         if(meshPhase){
+      //           if(j%2 == 0 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 1 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }else if(!meshPhase){
+      //           if(j%2 == 1 && i%2 ==0){
+      //               pixelBin[i][j] = 1;
+      //           }else if(j%2 == 0 && i%2 ==1){
+      //               pixelBin[i][j] = 1;
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
       //converting "pixelBin[][]" to "displayBin[][]" for displaying
       for (int i=0; i<maxRow; i++) {

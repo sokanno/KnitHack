@@ -1,12 +1,11 @@
 /*
-Brother KH970 Controller
- 2013 April
- Tomofumi Yoshida, So Kanno
+Brother CK-35 Controller
+ compatible with Knitic board http://www.knitic.com/
+ 2014 January
+ So Kanno
  */
 
-
 char receivedBin[201];
-
 int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -25,35 +24,60 @@ int pixelBin[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
+
+//int pixelBin[256] = {
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+//  0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+//  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+//};
+
 int dataSize = 202;
 boolean dataReplace = false;
 int header = 0;
 byte footer = 126;
 int columnNum = 0;
-byte carriageMode;
+byte carriageMode = 124;
 byte carriageK = 124;
 byte carriageL = 125;
 
 int phase = 0;
 
 //INPUT SYSTEM
-const int enc1 = 27;  //encoder 1
-const int enc2 = 26;  //encoder 2
-const int enc3 = 25;  //phase ditector 
-const int bar = 24;    //row counter
-const int LEnd = 23;   //Left End switch
-const int REnd = 22;   //Right End switch
+const int enc1 = 2;  //encoder 1
+const int enc2 = 3;  //encoder 2
+const int enc3 = 4;  //phase encoder
+const int LEnd = 1;   //endLineLeft for analog in
+const int REnd = 0;   //endLineRight for analog in
 
 //OUTPUT SYSTEM
 const int LED = 13;
 
+//this is for kh930
+//int solenoidsTemp[16] = 
+//{
+//  22,24,26,28,30,32,34,36,37,35,33,31,29,27,25,23};
+
+//for CK35
+int solenoidsTemp[16] = 
+{
+  22,24,26,28,30,32,34,36,33,31,29,27,25,23,35,37};
 
 int pos = 0;  //position of carriage
 int lastPos = 0;
-int encState1 = 0;  //encoder 1 state
 int encState2 = 0;  //encoder 2 state
-int lastState = 0; 
-
 
 int zero = 0;       //left end switch value
 int lastZero = 0;   
@@ -64,50 +88,45 @@ int lastBarSwitch = 0;
 int barCounter = 0;    //current row count
 int carDirection = 0;  //direction of carriage　0:unknown　1:right　2:left
 
-int checkSw = 21;
-boolean checkSwState = false;
-boolean lastCheckSwState = false;
-
 boolean sendFlag;
 
 void setup(){
-
-  pinMode(checkSw, INPUT);
   pinMode(LED, OUTPUT);
-
   pinMode(enc1, INPUT);
   pinMode(enc2, INPUT);
   pinMode(enc3, INPUT);
-  pinMode(bar, INPUT);
-  pinMode(LEnd, INPUT);
-  pinMode(REnd, INPUT);
 
-  for(int i=31; i<47; i++){
+  for(int i=22; i<38; i++){
     pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
   }
   attachInterrupt(enc1, rotaryEncoder, RISING);
   Serial.begin(57600);
-  
+
   if(digitalRead(enc3)==false){  //phase ditection
     phase = 1;
-  }
+  }  
 }
 
 
 void loop(){
-
   if(Serial.available() > 62){
-    if(Serial.readBytesUntil(footer, receivedBin, dataSize)){
-      dataReplace = true;     
-      // for(int i=0; i<200; i++){
-      //   Serial.write(receivedBin[i]);
-      // }
+    if(Serial.readBytesUntil(footer, receivedBin, dataSize+1)){
+      int checksum_calculated=0;
+      for(int i=0; i<200;i++){
+        checksum_calculated=checksum_calculated+receivedBin[i];
+      }
+      if(checksum_calculated%256==receivedBin[201]){     
+        dataReplace = true;     
+      }
+      else{
+        dataReplace = false;
+        Serial.write(header);
+      }
     }
   }
 
   if(dataReplace){
-    
     digitalWrite(13, HIGH);
     for(int i=24; i<225; i++){
       if(i < 224){
@@ -123,52 +142,34 @@ void loop(){
     digitalWrite(13, LOW);
   }
 
-  // checkSwState = digitalRead(checkSw);
-  zero = digitalRead(LEnd);
-  right = digitalRead(REnd);
-  barSwitch = digitalRead(bar);
+  zero = (analogRead(LEnd) > 500) ? 1 : 0;
+  right = (analogRead(REnd) > 500) ? 1 : 0;
 
   //rotation data correction
-  if(carriageMode == carriageK){
-    // if right end switch pushed
-    if(right != lastRight){
-      if(right == LOW){
-        if(carDirection == 1){
-          pos = 228;
-        }
-      } 
-    }
-    // if left end switch pushed
-    if(zero != lastZero){      
-      if(zero == LOW){      
-        if(carDirection == 2){
-          pos = 27;
-        }
-      } 
-    }
-  }
-  else if(carriageMode == carriageL){
-    // if left end switch pushed
-    if(zero != lastZero){      
-      if(zero == LOW){      
-        if(carDirection == 2){
-          pos = 23;
-        }
-      } 
-    }
+  // if left end switch pushed
+  //  if(carriageMode == carriageK){
+  if(zero != lastZero){
+    if(zero == true){      
+      if(carDirection == 2){
+        //          pos = 27;
+        pos = 30;
+      }
+    } 
   }
 
-  //if row counter pushed
-  if(barSwitch != lastBarSwitch){
-    if(barSwitch == HIGH){
-      barCounter = barCounter + 1;
-    }
+  // if right end switch pushed
+  if(right != lastRight){
+    if(right == true){    
+      if(carDirection == 1){
+        //          pos = 228;// lower than 225 doesnt works.
+        pos = 225;
+      }
+    } 
   }
+  //  }
 
-  lastBarSwitch = barSwitch;
   lastZero = zero;
   lastRight = right;
-  lastCheckSwState = checkSwState;
 }
 
 void rotaryEncoder(){
@@ -176,11 +177,11 @@ void rotaryEncoder(){
   if(!encState2){
     carDirection = 1;
     pos++;
-    if(pos != 256){
+    if(pos != 255){
       sendFlag = true;
       out1();
     }
-    else if(pos == 256 && sendFlag){
+    else if(pos == 255 && sendFlag){
       Serial.write(header);
       sendFlag = false;
     }
@@ -195,9 +196,9 @@ void rotaryEncoder(){
     else if(pos == 1 && sendFlag){
       Serial.write(header);
       sendFlag = false;
-      pos = 0;
     }
   } 
+  if(pos < 0) pos = 0;
 }
 
 //solenoid output when carriage going to right
@@ -206,15 +207,23 @@ void out1(){
 
   if(carriageMode == carriageL){
     if(pos > 15){
-      if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos+1]);}
-      else if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos+1]);}
+      if(pos<39){
+        digitalWrite(solenoidsTemp[abs((pos+(8*phase))-8)%16], pixelBin[pos+1]);
+      }
+      else if(pos>38){
+        digitalWrite(solenoidsTemp[abs((pos-(8*phase))-8)%16], pixelBin[pos+1]);
+      }
       // digitalWrite(abs(pos-8)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos > 15){
-      if(pos<39){digitalWrite(abs((pos+(8*phase))-8)%16+31,pixelBin[pos-16]);}
-      else if(pos>38){digitalWrite(abs((pos-(8*phase))-8)%16+31,pixelBin[pos-16]);}
+      if(pos<39){
+        digitalWrite(solenoidsTemp[abs((pos+(8*phase))-8)%16], pixelBin[pos-16]);
+      }
+      else if(pos>38){
+        digitalWrite(solenoidsTemp[abs((pos-(8*phase))-8)%16], pixelBin[pos-16]);
+      }
       // digitalWrite(abs(pos-8)%16+31,pixelBin[pos-16]);    
     }
   }
@@ -225,16 +234,27 @@ void out2(){
   digitalWrite(LED, pixelBin[pos]);
   if(carriageMode == carriageL){
     if(pos < 256-8){
-      if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+1]);}
-      else if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+1]);}
+      if(pos<39){
+        digitalWrite(solenoidsTemp[(pos+(8*phase))%16], pixelBin[pos+1]);
+      }
+      else if(pos>38){
+        digitalWrite(solenoidsTemp[(pos-(8*phase))%16], pixelBin[pos+1]);
+      }
       // digitalWrite((pos)%16+31,pixelBin[pos+1]);    
     }
   }
   else if(carriageMode == carriageK){
     if(pos < 256-8){
-      if(pos<39){digitalWrite((pos+(8*phase))%16+31,pixelBin[pos+8]);}
-      else if(pos>38){digitalWrite((pos-(8*phase))%16+31,pixelBin[pos+8]);}
+      if(pos<39){
+        digitalWrite(solenoidsTemp[(pos+(8*phase))%16], pixelBin[pos+8]);
+      }
+      else if(pos>38){
+        digitalWrite(solenoidsTemp[(pos-(8*phase))%16], pixelBin[pos+8]);
+      }
       // digitalWrite((pos)%16+31,pixelBin[pos+8]);    
     }
   }
 }
+
+
+
