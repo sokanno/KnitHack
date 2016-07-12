@@ -244,15 +244,15 @@ void out1() { // ->>>
   }
   else if (carriageMode == carriageL) {
     if (pos > 15) {
-      if (pos < 39) digitalWrite(solenoidsTemp[abs((pos + (8 * phase)) - 8) % 16], pixelBin[pos + 1]);
-      else if (pos > 38) digitalWrite(solenoidsTemp[abs((pos - (8 * phase)) - 8) % 16], pixelBin[pos + 1]);
+      if (pos < 39) digitalWrite(solenoidsTemp[abs((pos + (8 * phase)) - 8) % 16], pixelBin[pos]);//was+1
+      else if (pos > 38) digitalWrite(solenoidsTemp[abs((pos - (8 * phase)) - 8) % 16], pixelBin[pos]);//was+1
       //      digitalWrite(solenoidsTemp[abs(pos - 8) % 16], pixelBin[pos - 1]); //-18
     }
   }
   else if (carriageMode == andole) {
     if (pos > 15) {
-      if (pos < 39) digitalWrite(solenoidsTemp[abs((pos + (8 * phase)) - 8) % 16], pixelBin[pos + 6]);
-      else if (pos > 38) digitalWrite(solenoidsTemp[abs((pos - (8 * phase)) - 8) % 16], pixelBin[pos + 6]);
+      if (pos < 39) digitalWrite(solenoidsTemp[abs((pos + (8 * phase)) - 8) % 16], pixelBin[pos + 14]);// 4th +11, 3rd 30, 2nd -17, 1st +6
+      else if (pos > 38) digitalWrite(solenoidsTemp[abs((pos - (8 * phase)) - 8) % 16], pixelBin[pos + 14]);// 4th +11, 3rd 30, 2nd -17, 1st +6
       //      digitalWrite(solenoidsTemp[abs(pos - 8) % 16], pixelBin[pos + 7]);//+24
     }
   }
@@ -270,15 +270,15 @@ void out2() { // <<<-
   }
   else if (carriageMode == carriageL) {
     if (pos < 256 - 8) {
-      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos + 1]);
-      else if (pos > 38) digitalWrite(solenoidsTemp[(pos - (8 * phase)) % 16], pixelBin[pos + 1]);
+      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos]);//was+1
+      else if (pos > 38) digitalWrite(solenoidsTemp[(pos - (8 * phase)) % 16], pixelBin[pos]);//was+1
       //      digitalWrite(solenoidsTemp[pos % 16], pixelBin[pos - 1]); //-10
     }
   }
   else if (carriageMode == andole) {
     if (pos < 256 - 8) {
-      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos + 32]);
-      else if (pos > 38) digitalWrite(solenoidsTemp[(pos - (8 * phase)) % 16], pixelBin[pos + 32]);
+      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos + 40]); // 4th +37, 3rd 56, 2nd +9, 1st +32 
+      else if (pos > 38) digitalWrite(solenoidsTemp[(pos - (8 * phase)) % 16], pixelBin[pos + 40]); // 4th +37, 3rd 56, 2nd +9, 1st +32
       //      digitalWrite(solenoidsTemp[pos % 16], pixelBin[pos + 31]);
     }
   }
