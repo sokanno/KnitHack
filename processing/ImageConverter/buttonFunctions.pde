@@ -1,25 +1,72 @@
-public void change_mode() {
-  if (carriageMode == carriageK) {
-    carriageMode = carriageL;
-    ControlFont cfont = new ControlFont(pfont, 16);   
-    // cp5.addButton("Mesh_rev")
-    //   .setPosition(850, 541)
-    //     .setSize(120, 30);
-    // cp5.getController("Mesh_rev")
-    //   .getCaptionLabel()
-    //     .setFont(cfont)
-    //       .setSize(16);
-    // cp5.addButton("Mesh_Phase")
-    //   .setPosition(990, 541)
-    //     .setSize(120, 30);
-    // cp5.getController("Mesh_Phase")
-    //   .getCaptionLabel()
-    //     .setFont(cfont)
-    //       .setSize(16);
+//public void change_mode() {
+//  if (carriageMode == carriageK) {
+//    carriageMode = carriageL;
+//    ControlFont cfont = new ControlFont(pfont, 16);   
+//    // cp5.addButton("Mesh_rev")
+//    //   .setPosition(850, 541)
+//    //     .setSize(120, 30);
+//    // cp5.getController("Mesh_rev")
+//    //   .getCaptionLabel()
+//    //     .setFont(cfont)
+//    //       .setSize(16);
+//    // cp5.addButton("Mesh_Phase")
+//    //   .setPosition(990, 541)
+//    //     .setSize(120, 30);
+//    // cp5.getController("Mesh_Phase")
+//    //   .getCaptionLabel()
+//    //     .setFont(cfont)
+//    //       .setSize(16);
+//  } else if (carriageMode == carriageL) {
+//    carriageMode = carriageK;
+//    cp5.remove("Mesh_rev");
+//  }
+//}
+
+//  cp5.getController("change_mode")
+//    .getCaptionLabel()
+//      .setFont(cfont)
+//        .setSize(16);
+
+
+void customize(DropdownList ddl) {
+  // a convenience function to customize a DropdownList
+  ddl.setBackgroundColor(color(190));
+  ddl.setItemHeight(15);
+  ddl.setBarHeight(15);
+  ControlFont cfont = new ControlFont(pfont, 16); 
+  //  ddl.setFont(cfont);
+  ddl.captionLabel().set("dropdown");
+  ddl.captionLabel().style().marginTop = 3;
+  ddl.captionLabel().style().marginLeft = 3;
+  ddl.valueLabel().style().marginTop = 3;
+  ddl.addItem("carriage Mode "+2, 2);
+  ddl.addItem("carriage Mode "+1, 1);
+  ddl.addItem("carriage Mode "+0, 0);
+
+  //ddl.scroll(0);
+  //  ddl.setColorBackground(color(60));
+  ddl.setColorActive(color(255, 128));
+  ddl.setIndex(2);
+}
+
+void controlEvent(ControlEvent theEvent) {
+  //  int n = 0;
+  if (theEvent.isGroup()) {
+    n = int(theEvent.group().value());
   }
-  else if (carriageMode == carriageL) {
+  switch(n) {
+  case 0:
     carriageMode = carriageK;
-    cp5.remove("Mesh_rev");
+    println("carriageK");
+    break;
+  case 1:
+    carriageMode = carriageL;
+    println("carriageL");
+    break;
+  case 2:
+    carriageMode = andole;
+    println("andole");
+    break;
   }
 }
 
@@ -34,87 +81,18 @@ public void Mesh_Phase() {
 public void Reset(int theValue) {
   header = 0;
   for (int i=0; i<row; i++) {
-    sendStatus[i][0] = false;
+    //    sendStatus[i][0] = false;
   }
   reset.trigger();
 }
 
-public void Connect() {
-  println(Serial.list());
-  String portName = Serial.list()[7];
-  port = new Serial(this, portName, 57600);
-  port.clear();
-  done.trigger();
-  cp5.remove("Connect");
-  ControlFont cfont = new ControlFont(pfont, 16); 
-
-  cp5.addButton("Send_to_KnittingMachine")
-    .setPosition(850, 641)
-      .setSize(260, 30);
-  cp5.getController("Send_to_KnittingMachine")
-    .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+public void up(int theValue) {
+  displayStartRow -= 10;
+  if (displayStartRow < 0) displayStartRow = 0;
 }
 
-public void Send_to_KnittingMachine(int theValue) {
-  //sending pixelBin[][] to knitting Machine! 
-  for (int i=0; i<maxColumn; i++) {
-    if (displayBin[header][i] == 2) {
-      port.write(0);
-    } 
-    else {
-      port.write(displayBin[header][i]);
-    }
-  }
-  port.write(carriageMode);
-  port.write(footer);
-  print(header);
-  println("sent");
-  sendStatus[header][0] = true;
-  header++;
-  ready.trigger();
+public void down(int theValue) {
+  displayStartRow += 10;
+  if (displayStartRow > (row-200)) displayStartRow = row-200;
 }
-
-void serialEvent(Serial p) {
-  int checksum=0;
-
-  header = p.read();
-  print(header);
-  println("received");
-  header = int(header);
-  print("next is ");
-  print(header);
-  print(": ");
-  if (header < row) {
-    for (int i=0; i<maxColumn; i++) {
-      port.write(displayBin[header][i]);
-      print(displayBin[header][i]);
-      checksum=checksum+displayBin[header][i];
-    }
-    println();
-    port.write(carriageMode);
-    port.write(checksum % 256);
-    port.write(footer);
-    print(header);
-    println("sent");
-    sendStatus[header][0] = true;
-    completeFlag = false;
-    sent.trigger();
-  } 
-  else if (header == row-1 && !completeFlag) {
-    println("completed!");
-    done.trigger();
-    for (int i=0; i<row-1; i++) {
-      sendStatus[i][0] = false;
-      header = 0;
-    }
-    completeFlag = true;
-  } 
-  else {
-    error.trigger();
-  }
-}
-
-
 
