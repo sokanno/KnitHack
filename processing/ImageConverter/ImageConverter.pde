@@ -6,7 +6,6 @@ Image Converter for hacked Brother KH970.
 
 import controlP5.*;
 import java.util.*;
-// import sojamo.drop.*;
 import drop.*;
 import processing.serial.*;
 import ddf.minim.*;
