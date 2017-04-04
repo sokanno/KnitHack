@@ -66,7 +66,8 @@ int barCounter = 0;    //current row count
 int carDirection = 1;  //direction of carriage　1:right　2:left
 int lastCarDirection = 0;
 
-boolean sendFlag;
+boolean sendFlag; // not using at the moment
+
 void setup() {
   pinMode(LED, OUTPUT);
   pinMode(enc1, INPUT);
@@ -94,10 +95,10 @@ void setup() {
   else{
     phase = 0;
   }
-  attachInterrupt(enc1, rotaryEncoder, RISING);
+  attachInterrupt(digitalPinToInterrupt(enc1), rotaryEncoder, RISING);
   Serial.begin(57600);
 //  Serial.print("phase is ");
-  Serial.write(phase);
+  // Serial.write(phase);
 }
 
 void loop() {
@@ -151,38 +152,41 @@ void loop() {
   if (carriageMode == carriageK) {
     if (zero != lastZero) {
       if (zero == true) {
-        if (carDirection == 2) {
+        if (carDirection == 1) { // commented out this for adapt both direction (carDirection was used to be 2)
           //          pos = 27;
-          pos = 30;
-        }
+          Serial.write(callCue); //test
+        } // commented out this for adapt both direction (don't forget this with one on above)
+        pos = 30;
       }
     }
     // if right end switch pushed
     if (right != lastRight) {
       if (right == true) {
-        if (carDirection == 1) {
+        if (carDirection == 2) { // commented out this for adapt both direction (carDirection was used to be 1)
           //          pos = 228;// lower than 225 doesnt works.
-          pos = 225;
-        }
+          Serial.write(callCue); //test
+        } // commented out this for adapt both direction (don't forget this with one on above)
+        pos = 225;
       }
     }
   }
   else if (carriageMode == carriageL) {
     if (zero != lastZero) {
       if (zero == true) {
-        if (carDirection == 2) {
+        if (carDirection == 1) {
+          Serial.write(callCue);
           //          pos = 27;
-          pos = 23;
         }
+        pos = 23;
       }
     }
     // if right end switch pushed
     if (right != lastRight) {
       if (right == true) {
-        if (carDirection == 1) {
+        if (carDirection == 2) {
           //          pos = 228;// lower than 225 doesnt works.
-          pos = 220;
         }
+        pos = 220;
       }
     }
   }
@@ -191,22 +195,41 @@ void loop() {
 
 
   // Call next data
-  if (carriageMode == carriageK || carriageMode == carriageL) {
-    if (pos == 255 && sendFlag && carDirection == 1) {
-      Serial.write(callCue);
-      sendFlag = false;
-    }
-    if (pos == 1 && sendFlag && carDirection == 2) {
-      Serial.write(callCue);
-      sendFlag = false;
-    }
+  // if (carriageMode == carriageK || carriageMode == carriageL) {
+  //   if (pos == 255 && sendFlag && carDirection == 1) {
+  //     Serial.write(callCue);
+  //     sendFlag = false;
+  //   }
+  //   if (pos == 1 && sendFlag && carDirection == 2) {
+  //     Serial.write(callCue);
+  //     sendFlag = false;
+  //   }
+  // }
+  // else if (carriageMode == andole && carDirection != lastCarDirection) {
+  //   Serial.write(callCue);
+  // }
+
+  // Cal next data
+  // for L carriage
+  if (carriageMode == carriageL && carDirection == 1 && lastCarDirection == 2){
+    // if(pos > 23 && pos < 220 ) {
+      Serial.write(callCue);  
+    // }
   }
-  else if (carriageMode == andole && carDirection != lastCarDirection) {
-    Serial.write(callCue);
+  // for K carriage and andole
+  else if (carriageMode != carriageL && carDirection != lastCarDirection) {
+    // if(pos > 30 && pos < 225 ) {
+      Serial.write(callCue);
+    // } 
   }
   lastCarDirection = carDirection;
 
 //  Serial.println(pos);
+
+  //to avoid error, because pos makes error when became smaller than 0
+  // if(pos < 0){
+  //   pos = 0;
+  // }
 }
 
 void rotaryEncoder() {
@@ -215,7 +238,7 @@ void rotaryEncoder() {
     carDirection = 1;
     pos++;
     if (pos != 255) {
-      sendFlag = true;
+      // sendFlag = true;
       out1();
     }
   }
@@ -226,7 +249,7 @@ void rotaryEncoder() {
       pos = 0;
     }
     if (pos != 1) {
-      sendFlag = true;
+      // sendFlag = true;
       out2();
     }
   }

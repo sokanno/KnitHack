@@ -15,3 +15,18 @@ void fileOutput(File selection) {
     println("done saving");
   }
 }
+
+//void saveJson() {
+//  JSONObject _updates = new JSONObject();
+//  JSONObject _imageFilePath = new JSONObject();
+//  _updates.setInt("size", size);
+//  _updates.setInt("threshold", threshold);
+//  _updates.setInt("carriageMode", carriageMode);
+//  _imageFilePath.setString("imageFilePath" , imageFilePath);
+//
+//  JSONObject newJson = json;
+//  newJson.setJSONObject("updates", _updates);
+//  newJson.setJSONObject("imageFilePath", _imageFilePath);  
+//  saveJSONObject(json, "data/data.json");
+//  println("json saved");
+//}
