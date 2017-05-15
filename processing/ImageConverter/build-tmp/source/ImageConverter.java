@@ -1,14 +1,36 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import controlP5.*; 
+import java.util.*; 
+import drop.*; 
+import processing.serial.*; 
+import ddf.minim.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class ImageConverter extends PApplet {
+
   /*
 Image Converter for hacked Brother KH970.
  2016 September
  So Kanno
  */
 
-import controlP5.*;
-import java.util.*;
-import drop.*;
-import processing.serial.*;
-import ddf.minim.*;
+
+
+
+
+
 
 ControlP5 cp5;
 JSONObject json, params;
@@ -46,7 +68,7 @@ int column = 64;
 int row = 64;
 int knitSize = 64;
 int size;
-float rowRatio = 1.0;
+float rowRatio = 1.0f;
 int maxColumn = 200;
 int maxRow = 200;
 int[][] pixelBin = new int[row][column];
@@ -56,20 +78,20 @@ int shiftPos = 0;
 
 //GUI
 int GUIxPos = 880;
-color lime = color(25, 100, 90);
-color pink = color(90, 100, 100);
-color modeK = color(35, 35, 30);
-color modeL = color(75, 75, 80);
-color modeA = color(110, 110, 110);
+int lime = color(25, 100, 90);
+int pink = color(90, 100, 100);
+int modeK = color(35, 35, 30);
+int modeL = color(75, 75, 80);
+int modeA = color(110, 110, 110);
 int displayStartRow = 0;
 int displayStartRowRecent = 0;
 int maxRecentDisplay = 6;
-color scrollBarBG = color(50, 50, 50);
-color scrollBarCol = color(75, 70, 70);
-float scrollBarRatio = 1.0;
+int scrollBarBG = color(50, 50, 50);
+int scrollBarCol = color(75, 70, 70);
+float scrollBarRatio = 1.0f;
 boolean scrollModeFlag = false;
 int scrollBarLength = 554;
-float scrollPitch = 0.0;
+float scrollPitch = 0.0f;
 boolean meshSwitch = false;
 boolean meshPhase = true;
 
@@ -93,9 +115,9 @@ int n = 0;
 
 String imageFilePath;
 
-void setup() {
+public void setup() {
   frameRate(30);
-  size(1200, 715);
+  
   colorMode(HSB, 100);
   json = loadJSONObject("filePath.json");
   imageFilePath = json.getString("filePath");
@@ -142,7 +164,7 @@ void setup() {
   println(carriageMode);
 }
 
-void cp5setup(){
+public void cp5setup(){
   pfont = loadFont("04b-03b-16.vlw");
   numFont = loadFont("04b-03b-8.vlw");
   textFont(pfont, 16);
@@ -282,7 +304,7 @@ void cp5setup(){
         .updateSize();
 }
 
-void fileSelected(File selection) {
+public void fileSelected(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
     imageFilePath = "default__.gif";
@@ -301,9 +323,9 @@ void fileSelected(File selection) {
   }
 }
 
-void draw() {
+public void draw() {
   column = size;
-  row = int(column*rowRatio);
+  row = PApplet.parseInt(column*rowRatio);
 
   colorMode(HSB, 100);
   fill(0, 0, 100);
@@ -328,10 +350,10 @@ void draw() {
       img = simg.get(0, 0, simg.width, simg.height);
       if (simg.height > simg.width) {
         rowRatio = simg.height/simg.width;
-        row = int(column*rowRatio);
+        row = PApplet.parseInt(column*rowRatio);
       } else if (simg.height <= simg.width) {
         rowRatio = simg.width/simg.height;
-        row = int(column/rowRatio);
+        row = PApplet.parseInt(column/rowRatio);
       }
       //      println(row);
       img.resize(column, row);
@@ -343,8 +365,8 @@ void draw() {
       pixelBin = new int[row][column];
       for (int i=0; i<row; i++) {
         for (int j=0; j<column; j++) {
-          color c = img.pixels[(i*column)+j]; // error sometimes
-          int b = int(brightness(c));
+          int c = img.pixels[(i*column)+j]; // error sometimes
+          int b = PApplet.parseInt(brightness(c));
           if (b > threshold) {
             pixelBin[i][j] = 1;
           } else if (b <= threshold) {
@@ -599,17 +621,17 @@ void draw() {
   rect(GUIxPos-49, 44, 24, scrollBarLength);
   fill(scrollBarCol);
   if (row > maxRow) {
-    scrollBarRatio = float(row)/float(maxRow);
+    scrollBarRatio = PApplet.parseFloat(row)/PApplet.parseFloat(maxRow);
     scrollPitch = (scrollBarLength - scrollBarLength/scrollBarRatio) / (row-maxRow);
   } else {
-    scrollBarRatio = 1.0;
+    scrollBarRatio = 1.0f;
   }   
   rect(GUIxPos-49, 44+(552-displayStartRow*scrollPitch), 24, -scrollBarLength/scrollBarRatio);
   fill(90, 100, 100);
   //  rect(0, 670, width, 730);
 }
 
-void dispose() {
+public void dispose() {
   params = new JSONObject();
   params.setInt("knitSize", size);
   params.setInt("threshold", threshold);
@@ -617,4 +639,230 @@ void dispose() {
   params.setInt("shiftPos", shiftPos);
   saveJSONObject(params, "data/params.json");
   println(storeBin.length);
+}
+public void Connect() {
+  String portName = Serial.list()[6]; // you might need 
+  println(Serial.list());
+  port = new Serial(this, portName, 57600);
+  port.clear();
+  done.trigger();
+  cp5.remove("Connect");
+  ControlFont cfont = new ControlFont(pfont, 16); 
+
+  cp5.addButton("Send_to_KnittingMachine")
+    .setPosition(GUIxPos, 621)
+    .setSize(300, 30);
+  cp5.getController("Send_to_KnittingMachine")
+    .getCaptionLabel()
+    .setFont(cfont)
+    .setSize(16);
+}
+
+public void Send_to_KnittingMachine(int theValue) {
+  //sending pixelBin[][] to knitting Machine! 
+  patternSend();
+}
+
+public void Back() {
+  //sending one before of pixelBin[][].
+  if (header > 1) {
+    header--; 
+    for (int i=0; i<maxColumn; i++) {
+      if (storeBin[header][i] == 2) {
+        port.write(0);
+        //      print(0);
+      } else {
+        port.write(storeBin[header][i]);
+        //      print(storeBin[header][i]);
+      }
+    }
+    //  print('\n');
+    port.write(carriageMode);
+    port.write(footer);
+    print(header);
+    println("sent");
+    //  sendStatus[header][0] = true;
+    back.trigger();
+    port.clear();
+  }
+}
+
+public void serialEvent(Serial p) {
+  /*
+  two function
+   1. send row of image data if get a cue (0~200)
+   2. print receive data to debug
+   */
+
+  receivedData = p.read();
+
+  if (receivedData == callCue) {
+    header = PApplet.parseInt(header);
+    patternSend();
+  } else if (receivedData == doneCue) {
+    print('\n');
+  } else {
+    print(receivedData);
+  }
+}
+
+public void patternSend() {
+  if (header < row - 1) {
+    for (int i=0; i<maxColumn; i++) {
+      if (storeBin[header][i] == 2) {
+        port.write(0);
+      } else {
+        port.write(storeBin[header][i]);
+      }
+    }
+    port.write(carriageMode);
+    port.write(footer);
+    completeFlag = false;
+    sent.trigger();
+    header++;
+  }
+  else if (header == row - 1 && !completeFlag) {
+    println("completed!");
+    done.trigger();
+    for (int i=0; i<row; i++) {
+      header = 0;
+    }
+    completeFlag = true;
+  } else {
+    error.trigger();
+  }
+  println("header is " + header + ", displayStartRow is " + displayStartRow);
+}
+public void carriage(int n) {
+  if (n == 0) carriageMode = carriageK;
+  else if (n == 1) carriageMode = carriageL;
+}
+
+public void Mesh_rev() {
+  meshSwitch = !meshSwitch;
+}
+
+public void Mesh_Phase() {
+  meshPhase = !meshPhase;
+}
+
+public void Reset(int theValue) {
+  header = 0;
+  for (int i=0; i<row; i++) {
+    //    sendStatus[i][0] = false;
+  }
+  reset.trigger();
+}
+
+public void up(int theValue) {
+  displayStartRow -= 10;
+  if (displayStartRow < 0) displayStartRow = 0;
+}
+
+public void down(int theValue) {
+  displayStartRow += 10;
+  if (displayStartRow > (row-200)) displayStartRow = row-200;
+}
+
+public void left(int theValue) {
+  shiftPos--;
+  println(shiftPos);
+}
+
+public void right(int theValue) {
+  shiftPos++;
+  println(shiftPos);
+}
+
+
+public void Cue() {
+  savedCue = header;
+  savecue.trigger();
+}
+
+public void Go_to() {
+  header = savedCue;
+  gotocue.trigger();
+}
+
+//CueControl by text area cuepos
+public void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isAssignableFrom(Textfield.class)) {
+    if(PApplet.parseInt(theEvent.getStringValue()) < row){
+    savedCue = PApplet.parseInt(theEvent.getStringValue());
+    println(savedCue);
+    }
+    else{
+      error.trigger();
+    }
+  }
+}
+public void dropEvent(DropEvent theDropEvent) {
+//  println("");
+//  println("isFile()\t"+theDropEvent.isFile());
+//  println("isImage()\t"+theDropEvent.isImage());
+//  println("isURL()\t"+theDropEvent.isURL());
+//  println("file()\t"+theDropEvent.file());
+  println(theDropEvent.file());
+  // if the dropped object is an image, then 
+  // load the image into our PImage.
+  if (theDropEvent.isImage()) {
+    println("### loading image ...");
+    dimg = theDropEvent.loadImage();
+    simg = theDropEvent.loadImage();
+    img = createImage(simg.width, simg.height, HSB);
+    dimgConvert = true;
+    loadMode = true;
+    // create json
+    json = new JSONObject();
+    json.setString("filePath", theDropEvent.toString());
+    saveJSONObject(json, "data/filePath.json"); 
+    println("json saved");
+  }
+}
+public void Load(int theValue) {
+  //  getFile = getFileName();
+  selectInput("Select a file to process:", "fileInput");
+}
+
+public void fileInput(File selection) {
+  if (selection != null) {
+    println("User selected " + selection.getAbsolutePath());
+    loadMode = false;
+    int[] loadBin = new int[maxRow*maxColumn];
+    loadBin = PApplet.parseInt(loadBytes(selection.getAbsolutePath()));
+    println("data loaded");
+    for (int i=0; i<maxRow; i++) {
+      for (int j=0; j<maxColumn; j++) {
+        displayBin[i][j] = PApplet.parseInt(loadBin[i*maxColumn+j]);
+      }
+    }
+  }
+}
+public void Save() {
+  selectOutput("Select a file to write to:", "fileOutput");
+}
+
+public void fileOutput(File selection) {
+  byte[] saveBin = new byte[maxRow*maxColumn];
+  for (int i=0; i<maxRow; i++) {
+    for (int j=0; j<maxColumn; j++) {
+      saveBin[i*maxColumn+j] = PApplet.parseByte(displayBin[i][j]);
+    }
+  }
+  if (selection != null) {
+    println("User selected " + selection.getAbsolutePath());
+    saveBytes(selection.getAbsolutePath(), saveBin);
+    println("done saving");
+  }
+}
+  public void settings() {  size(1200, 715); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "ImageConverter" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
