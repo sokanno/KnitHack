@@ -629,6 +629,15 @@ public void draw() {
   rect(GUIxPos-49, 44+(552-displayStartRow*scrollPitch), 24, -scrollBarLength/scrollBarRatio);
   fill(90, 100, 100);
   //  rect(0, 670, width, 730);
+
+  // cleaning
+  g.removeCache(dimg);
+  g.removeCache(img);
+  g.removeCache(oimg);
+  g.removeCache(simg);
+  g.removeCache(title);
+  g.removeCache(dataModeImage);
+  g.removeCache(negativeButtonImg);
 }
 
 public void dispose() {
