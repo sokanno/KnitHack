@@ -78,8 +78,7 @@ void patternSend() {
     completeFlag = false;
     sent.trigger();
     header++;
-  }
-  else if (header == row - 1 && !completeFlag) {
+  } else if (header == row - 1 && !completeFlag) {
     println("completed!");
     done.trigger();
     for (int i=0; i<row; i++) {
@@ -90,4 +89,15 @@ void patternSend() {
     error.trigger();
   }
   println("header is " + header + ", displayStartRow is " + displayStartRow);
+
+  //auto scroll
+  if (header > 150) {
+    if (header < row - 50) {
+      displayStartRow = header - 150;
+    } else {
+      displayStartRow = row - 200;
+    }
+  } else {
+    displayStartRow = 0;
+  }
 }

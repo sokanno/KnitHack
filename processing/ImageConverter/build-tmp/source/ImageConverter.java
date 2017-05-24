@@ -412,7 +412,7 @@ public void draw() {
       //if the image is bigger than display
       else if (row > maxRow) {
         if (maxRow + displayStartRow > row) {
-          displayStartRow = row - maxRow; // why, because 
+          // displayStartRow = row - maxRow; // why, because 
         }
         for (int i=0; i<maxRow; i++) {
           for (int j=0; j<maxColumn; j++) {

@@ -1,4 +1,4 @@
-  /*
+/*
 Image Converter for hacked Brother KH970.
  2016 September
  So Kanno
@@ -50,7 +50,7 @@ float rowRatio = 1.0;
 int maxColumn = 200;
 int maxRow = 200;
 int[][] pixelBin = new int[row][column];
-int[][] storeBin = new int[row][column];
+int[][] storeBin = new int[row][maxColumn];
 int[][] displayBin = new int[maxRow+6][maxColumn];
 int shiftPos = 0;
 
@@ -99,7 +99,7 @@ void setup() {
   colorMode(HSB, 100);
   json = loadJSONObject("filePath.json");
   imageFilePath = json.getString("filePath");
-  if(loadImage(imageFilePath) == null){
+  if (loadImage(imageFilePath) == null) {
     println("null");
     selectInput("Select a file to process:", "fileSelected");
     imageFilePath = "default__.gif";
@@ -142,7 +142,7 @@ void setup() {
   println(carriageMode);
 }
 
-void cp5setup(){
+void cp5setup() {
   pfont = loadFont("04b-03b-16.vlw");
   numFont = loadFont("04b-03b-8.vlw");
   textFont(pfont, 16);
@@ -153,133 +153,133 @@ void cp5setup(){
   List l = Arrays.asList("K carriage", "L carriage");
   cp5.addScrollableList("carriage")
     .setPosition(GUIxPos, 500)
-      .setSize(200, 100)
-        .setBarHeight(20)
-          .setItemHeight(20)
-            .addItems(l)
-              .setValue(carriageMode-3)
-                // .setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
-                ;
+    .setSize(200, 100)
+    .setBarHeight(20)
+    .setItemHeight(20)
+    .addItems(l)
+    .setValue(carriageMode-3)
+    // .setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
+    ;
 
   cp5.addSlider("threshold")
     .setPosition(GUIxPos, 20)
-      .setSize(200, 30)
-        .setRange(0, 99)
-          .setValue(threshold);
+    .setSize(200, 30)
+    .setRange(0, 99)
+    .setValue(threshold);
 
   cp5.addSlider("size")
     .setPosition(GUIxPos, 70)
-      .setSize(200, 30)
-        .setRange(32, 198)
-          .setValue(knitSize);
+    .setSize(200, 30)
+    .setRange(32, 198)
+    .setValue(knitSize);
 
   cp5.addButton("Reset")
     .setPosition(GUIxPos, 571)
-      .setSize(50, 30);
+    .setSize(50, 30);
 
   cp5.addButton("Back")
     .setPosition(GUIxPos + 60, 571)
-      .setSize(50, 30);
+    .setSize(50, 30);
 
   cp5.addButton("Cue")
     .setPosition(GUIxPos + 120, 571)
-      .setSize(50, 30);
+    .setSize(50, 30);
 
   cp5.addButton("Go_to")
     .setPosition(GUIxPos + 180, 571)
-      .setSize(50, 30);
+    .setSize(50, 30);
 
   cp5.addTextfield("cuePos")
     .setPosition(GUIxPos + 270, 571)
-      .setSize(40, 30)
-        .setAutoClear(false);
+    .setSize(40, 30)
+    .setAutoClear(false);
 
   cp5.addButton("Connect")
     .setPosition(GUIxPos, 621)
-      .setSize(300, 30);
+    .setSize(300, 30);
 
   cp5.getController("threshold")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("size")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("Connect")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("Reset")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("Back")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("Cue")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   cp5.getController("Go_to")
     .getCaptionLabel()
-      .setFont(cfont)
-        .setSize(16);
+    .setFont(cfont)
+    .setSize(16);
 
   PImage[] buttons_left = {
     loadImage("button_left_dark.png"), 
     loadImage("button_left_middle.png"), 
     loadImage("button_left_bright.png")
-    };
+  };
 
   PImage[] buttons_right = {
     loadImage("button_right_dark.png"), 
     loadImage("button_right_middle.png"), 
     loadImage("button_right_bright.png")
-    };
+  };
 
-    cp5.addButton("left")
-      //    .setValue(128)
-      .setPosition(GUIxPos+90, 530)
-        .setImages(buttons_left)
-          .updateSize();
+  cp5.addButton("left")
+    //    .setValue(128)
+    .setPosition(GUIxPos+90, 530)
+    .setImages(buttons_left)
+    .updateSize();
 
   cp5.addButton("right")
     //    .setValue(128)
     .setPosition(GUIxPos+140, 530)
-      .setImages(buttons_right)
-        .updateSize();
+    .setImages(buttons_right)
+    .updateSize();
 
   PImage[] buttons_up = {
     loadImage("button_up_dark.png"), 
     loadImage("button_up_middle.png"), 
     loadImage("button_up_bright.png")
-    };
+  };
 
   PImage[] buttons_down = {
     loadImage("button_down_dark.png"), 
     loadImage("button_down_middle.png"), 
     loadImage("button_down_bright.png")
-    };
+  };
 
-    cp5.addButton("down")
-      //    .setValue(128)
-      .setPosition(GUIxPos-49, 20)
-        .setImages(buttons_up)
-          .updateSize();
+  cp5.addButton("down")
+    //    .setValue(128)
+    .setPosition(GUIxPos-49, 20)
+    .setImages(buttons_up)
+    .updateSize();
 
   cp5.addButton("up")
     //    .setValue(128)
     .setPosition(GUIxPos-49, 597)
-      .setImages(buttons_down)
-        .updateSize();
+    .setImages(buttons_down)
+    .updateSize();
 }
 
 void fileSelected(File selection) {
@@ -353,7 +353,7 @@ void draw() {
         }
       }
       //converting "pixelBin[][]" to "storeBin[][]"
-      storeBin = new int[row][maxColumn];
+      storeBin = new int[row+6][maxColumn];
       for (int i=0; i<row; i++) {
         for (int j=0; j<maxColumn; j++) {
           int margin = (maxColumn - column)/2;
@@ -390,7 +390,7 @@ void draw() {
       //if the image is bigger than display
       else if (row > maxRow) {
         if (maxRow + displayStartRow > row) {
-          displayStartRow = row - maxRow; // why, because 
+          // displayStartRow = row - maxRow; // why, because
         }
         for (int i=0; i<maxRow; i++) {
           for (int j=0; j<maxColumn; j++) {
@@ -460,21 +460,10 @@ void draw() {
       rect(30+(maxColumn-1-j)*4, 20+(maxRow-1-i)*3, 4, 3);
     }
   }
-    //auto scroll
-  if (header > 150){
-    if(header < row - 50) {
-      displayStartRow = header - 150;
-    }
-    else{
-      displayStartRow = row - 200;
-    }
-  }
-  else {
-    displayStartRow = 0;
-  }
-  
+
   //zoom displaying recent 6 rows of displayBin[][]
-  int startLineRecent = header - displayStartRow;
+  //int startLineRecent = header - displayStartRow;
+  int startLineRecent = header;
   for (int i=startLineRecent; i<startLineRecent+6; i++) {
     int offset = 0;
     if (header > 0) {
@@ -484,14 +473,15 @@ void draw() {
       float h = 0;
       float s = 0;
       float b = 0;        
-      if (displayBin[i-offset][j] == 1) { // why this makes error 6 rows before end. ah. 
-      //if (displayBin[i][j] == 1) { // why this makes error 6 rows before end. ah. 
+      if (storeBin[i-offset][j] == 1) { // why this makes error 6 rows before end. ah. 
+        //if (displayBin[i-offset][j] == 1) { // why this makes error 6 rows before end. ah. 
 
         if (header == 0) {
           h = 0;
           s = 0;
           b = 100;//white
-        } else if (i > header - displayStartRow) { // error sometimes
+          //} else if (i > header - displayStartRow) { // error sometimes
+        } else if (i > header) { // error sometimes
           h = 0;
           s = 0;
           b = 100;//white
@@ -500,12 +490,14 @@ void draw() {
           s = 100;
           b = 100;//yellow
         }
-      } else if (displayBin[i-offset][j] == 0) {
+      } else if (storeBin[i-offset][j] == 0) {
+        //} else if (displayBin[i-offset][j] == 0) {
         if (header == 0) {
           h = 0;
           s = 0;
           b = 0;//black
-        } else if (i > header - displayStartRow) {
+          //} else if (i > header - displayStartRow) {
+        } else if (i > header ) {
           h = 0;
           s = 0;
           b = 0;//black
@@ -514,7 +506,8 @@ void draw() {
           s = 100;
           b = 90;//blue
         }
-      } else if (displayBin[i-offset][j] == 2) {
+      } else if (storeBin[i-offset][j] == 2) {
+        //} else if (displayBin[i-offset][j] == 2) {
         h = 0;
         s = 0;
         b = 20;//grey
@@ -528,9 +521,9 @@ void draw() {
   //draw column line and row line
   stroke(25, 100, 90);//lime green
   line(30 + 100*4 - (column/2-shiftPos+1)*4, 20, 
-       30 + 100*4 - (column/2-shiftPos+1)*4, 20+200*3);
+    30 + 100*4 - (column/2-shiftPos+1)*4, 20+200*3);
   line(30 + 100*4 + (column/2+shiftPos+1)*4, 20, 
-       30 + 100*4 + (column/2+shiftPos+1)*4, 20+200*3);
+    30 + 100*4 + (column/2+shiftPos+1)*4, 20+200*3);
   stroke(90, 100, 100);//pink
   line(30, 20, 30+200*4, 20);
   if (row*3 <= maxRow*3) {
