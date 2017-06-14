@@ -66,6 +66,10 @@ int barCounter = 0;    //current row count
 int carDirection = 1;  //direction of carriage　1:right　2:left
 int lastCarDirection = 0;
 
+//to prevent double callcue
+int turnedPos;
+int debounce = 5;
+
 boolean sendFlag; // not using at the moment
 
 void setup() {
@@ -154,7 +158,7 @@ void loop() {
       if (zero == true) {
         if (carDirection == 1) { // commented out this for adapt both direction (carDirection was used to be 2)
           //          pos = 27;
-          Serial.write(callCue); //test
+          // Serial.write(callCue); //test
         } // commented out this for adapt both direction (don't forget this with one on above)
         pos = 30;
       }
@@ -164,7 +168,7 @@ void loop() {
       if (right == true) {
         if (carDirection == 2) { // commented out this for adapt both direction (carDirection was used to be 1)
           //          pos = 228;// lower than 225 doesnt works.
-          Serial.write(callCue); //test
+          // Serial.write(callCue); //test
         } // commented out this for adapt both direction (don't forget this with one on above)
         pos = 225;
       }
@@ -174,7 +178,7 @@ void loop() {
     if (zero != lastZero) {
       if (zero == true) {
         if (carDirection == 1) {
-          Serial.write(callCue);
+          // Serial.write(callCue);
           //          pos = 27;
         }
         pos = 23;
@@ -213,13 +217,19 @@ void loop() {
   // for L carriage
   if (carriageMode == carriageL && carDirection == 1 && lastCarDirection == 2){
     // if(pos > 23 && pos < 220 ) {
-      Serial.write(callCue);  
+    if(abs(turnedPos - pos) > debounce){
+      Serial.write(callCue); 
+    }
+    turnedPos = pos;
     // }
   }
   // for K carriage and andole
   else if (carriageMode != carriageL && carDirection != lastCarDirection) {
     // if(pos > 30 && pos < 225 ) {
-      Serial.write(callCue);
+    if(abs(turnedPos - pos) > debounce){
+      Serial.write(callCue); 
+    }
+    turnedPos = pos;
     // } 
   }
   lastCarDirection = carDirection;

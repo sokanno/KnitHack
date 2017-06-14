@@ -37,7 +37,7 @@ boolean completeFlag = false;
 boolean resizeFlag = true;
 boolean dimgConvert = true;
 String getFile = null;
-int threshold = 210;
+int threshold = 210;  
 PFont pfont;
 PFont numFont;
 boolean colorValue = true;
