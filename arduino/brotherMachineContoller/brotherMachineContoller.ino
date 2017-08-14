@@ -80,28 +80,28 @@ void setup() {
   pinMode(LEnd, INPUT);
   pinMode(REnd, INPUT);
 
-  #ifdef shieldTypeKnitic
-    for (int i = 22; i < 38; i++) {
-      pinMode(i, OUTPUT);
-      digitalWrite(i, LOW);
-    }
-  #endif
-  #ifdef shieldTypeOriginal
-    for (int i = 31; i < 47; i++) {
-      pinMode(i, OUTPUT);
-      digitalWrite(i, LOW);
-    }
-  #endif
+#ifdef shieldTypeKnitic
+  for (int i = 22; i < 38; i++) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+  }
+#endif
+#ifdef shieldTypeOriginal
+  for (int i = 31; i < 47; i++) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+  }
+#endif
 
   if (digitalRead(enc3) == LOW) { //phase ditection
     phase = 1; // was 1
   }
-  else{
+  else {
     phase = 0;
   }
   attachInterrupt(digitalPinToInterrupt(enc1), rotaryEncoder, RISING);
   Serial.begin(57600);
-//  Serial.print("phase is ");
+  //  Serial.print("phase is ");
   // Serial.write(phase);
 }
 
@@ -136,21 +136,21 @@ void loop() {
   }
 
 
-  // rotation data correction
-  #ifdef shieldTypeOriginal
-    zero = digitalRead(LEnd);
-    right = digitalRead(REnd);
-  #endif
-  #ifdef shieldTypeKnitic
-    if (carriageMode == carriageK) {
-      zero = (analogRead(LEnd) > 500) ? 1 : 0;
-      right = (analogRead(REnd) > 500) ? 1 : 0;
-    }
-    else if (carriageMode == carriageL) {
-      zero = (analogRead(LEnd) < 50) ? 1 : 0;
-      right = (analogRead(REnd) < 50) ? 1 : 0;
-    }
-  #endif
+  //// rotation data correction
+#ifdef shieldTypeOriginal
+  zero = digitalRead(LEnd);
+  right = digitalRead(REnd);
+#endif
+#ifdef shieldTypeKnitic
+  if (carriageMode == carriageK) {
+    zero = (analogRead(LEnd) > 500) ? 1 : 0;
+    right = (analogRead(REnd) > 500) ? 1 : 0;
+  }
+  else if (carriageMode == carriageL) {
+    zero = (analogRead(LEnd) < 50) ? 1 : 0;
+    right = (analogRead(REnd) < 50) ? 1 : 0;
+  }
+#endif
 
   // if left end switch pushed
   if (carriageMode == carriageK) {
@@ -178,7 +178,7 @@ void loop() {
     if (zero != lastZero) {
       if (zero == true) {
         if (carDirection == 1) {
-          // Serial.write(callCue);
+          Serial.write(callCue);
           //          pos = 27;
         }
         pos = 23;
@@ -215,26 +215,25 @@ void loop() {
 
   // Cal next data
   // for L carriage
-  if (carriageMode == carriageL && carDirection == 1 && lastCarDirection == 2){
+  if (carriageMode == carriageL && carDirection == 1 && lastCarDirection == 2) {
     // if(pos > 23 && pos < 220 ) {
-    if(abs(turnedPos - pos) > debounce){
-      Serial.write(callCue); 
+    // if(abs(turnedPos - pos) > debounce){
+    Serial.write(callCue);
+  }
+  // turnedPos = pos;
+  // }
+  // for K carriage and andole
+  else if (carriageMode != carriageL && carDirection != lastCarDirection) {
+    // if(pos > 30 && pos < 225 ) {
+    if (abs(turnedPos - pos) > debounce) {
+      Serial.write(callCue);
     }
     turnedPos = pos;
     // }
   }
-  // for K carriage and andole
-  else if (carriageMode != carriageL && carDirection != lastCarDirection) {
-    // if(pos > 30 && pos < 225 ) {
-    if(abs(turnedPos - pos) > debounce){
-      Serial.write(callCue); 
-    }
-    turnedPos = pos;
-    // } 
-  }
   lastCarDirection = carDirection;
 
-//  Serial.println(pos);
+  //  Serial.println(pos);
 
   //to avoid error, because pos makes error when became smaller than 0
   // if(pos < 0){
@@ -310,7 +309,7 @@ void out2() { // <<<-
   }
   else if (carriageMode == andole) {
     if (pos < 256 - 8) {
-      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos + 40]); // 4th +37, 3rd 56, 2nd +9, 1st +32 
+      if (pos < 39) digitalWrite(solenoidsTemp[(pos + (8 * phase)) % 16], pixelBin[pos + 40]); // 4th +37, 3rd 56, 2nd +9, 1st +32
       else if (pos > 38) digitalWrite(solenoidsTemp[(pos - (8 * phase)) % 16], pixelBin[pos + 40]); // 4th +37, 3rd 56, 2nd +9, 1st +32
       //      digitalWrite(solenoidsTemp[pos % 16], pixelBin[pos + 31]);
     }
